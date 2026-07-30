@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tourready-operator",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "47283"],
+      "port": 47283,
+      "autoPort": true,
+      "cwd": "tourready-operator"
+    }
+  ]
+}

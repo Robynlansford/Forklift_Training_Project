@@ -1,0 +1,42 @@
+# ── Secrets & ephemeral endpoints ───────────────────────────────────────
+# Signed upload URL for upload.higgsfield.ai — credential-bearing, never commit.
+scroll-intro/.upload_url
+.env
+.env*.local
+*.pem
+*.key
+
+# Dead cloudflared quick-tunnel logs. Hostnames are ephemeral; publishing them
+# is pure noise and leaks which machine served the demo.
+tunnel-url.txt
+
+# ── Dependencies & build output ──────────────────────────────────────────
+node_modules/
+.next/
+out/
+build/
+__pycache__/
+*.py[cod]
+*.tsbuildinfo
+next-env.d.ts
+
+# ── Scroll-intro video masters ───────────────────────────────────────────
+# The film's archival masters total ~757MB and several legs exceed GitHub's
+# 50MB warning threshold. The site does not read from these — it serves
+# public/scroll-intro/vid/, which holds the Topaz-4K-downsampled-to-1080p
+# hero delivery encodes (~22MB, committed). Regenerate masters from FILM.md,
+# which documents every generation setting, the seam contract and the ffmpeg
+# encode chain.
+scroll-intro/video/
+scroll-intro/frames4k/
+
+# Boundary-frame extracts and seam-diff contact sheets: build intermediates,
+# reproducible from the masters via the documented ffmpeg -sseof command.
+scroll-intro/frames/
+
+# ── OS / editor cruft ────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

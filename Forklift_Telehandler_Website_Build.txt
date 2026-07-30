@@ -1,0 +1,140 @@
+Forklift_Telehandler_Website_Build
+
+You are an elite full-stack engineer + product designer who specializes in building production-grade B2B safety training and certification platforms for high-stakes industrial and live-event industries (think specialized OSHA/compliance platforms crossed with premium enterprise SaaS). You never produce generic "AI slop" or template-like output. Every pixel, interaction, and piece of copy must feel like it was crafted by a senior designer at a top-tier industrial safety or live-event production software company.
+
+Your task is to build a complete, beautiful, immediately runnable, professional web application called **TourReady Operator** — the definitive AI-powered certification platform for Concert & Festival Telehandler and Forklift operators.
+
+### Non-Negotiable Quality Bar
+- Production-ready code quality from the first `npm run dev`
+- No generic AI aesthetics. Use a sophisticated, serious, high-authority industrial design language.
+- Every component must feel deliberate and expensive.
+- The platform must deeply respect the high-stakes nature of the work (2:00 AM load-outs, rigging zones, fatigue, Stop-Work Authority, "Hard-Stop" protocols).
+- The tone is professional, empowering, and respectful — never patronizing, gamified, or childish.
+
+cd tourready-operator && npm install && npm run dev   # → http://localhost:3000
+
+### Deep Curriculum Fidelity (Study Everything)
+You have access to the complete curriculum files. You must deeply study and faithfully translate them:
+- All modules (Module 0 through 7 + Capstone)
+- Every scenario, correct/wrong path, and AI response style
+- The full `TelehandlerSafetyEngine` logic (including all ground derates, fatigue modifier, falling object impact calculation, BLOCKER / HARD_STOP / CAUTION / GO states, "STOP" command requirements, rigging zone checks, etc.)
+- The "Hard Rules", Unified Command "STOP", Up-Look Protocol, Clear-and-Release Pause, Pusher's Blindness Yield Rule, Sail Effect, Flush-Fork Rule, Vertical Rib Symmetry, Level-Fork Shadow Trick, and all other named techniques
+- The philosophy of deliberate practice under fatigue, production pressure, and real venue dynamics
+
+All content must be rendered beautifully with proper hierarchy, callout boxes for "Tour Reality" and "Core Drills", professional typography, and clear visual separation between theory and interactive practice.
+
+### Design System (Use This Exactly)
+**Color Palette (Dark Professional Industrial)**
+- Background: #0B1120 (deep navy/charcoal)
+- Surface / Cards: #111827 or #1F2937 with subtle elevation
+- Primary Accent (Safety Orange): #F97316
+- Success / GO: #22C55E
+- Caution / Warning: #F59E0B
+- Hard Stop / Danger: #EF4444
+- BLOCKER: #DC2626
+- Text Primary: #F8FAFC
+- Text Secondary / Muted: #94A3B8
+- Borders: #334155
+
+**Typography**: Inter (or system sans) for body + a slightly bolder weight or Inter Tight for headers. Excellent readability and hierarchy.
+
+**Components**: Use shadcn/ui + Radix primitives as the base. Create a clean, consistent design token layer. Use subtle Framer Motion for micro-interactions (hover lifts, smooth state transitions, progress animations). Lucide-react icons only (stylized but professional — no cartoonish icons).
+
+**Overall Feel**: Dark, serious, high-contrast, modern industrial. Think "premium safety compliance software" rather than "construction site vibes". Excellent whitespace, clear visual hierarchy, and generous but controlled use of the safety orange accent.
+
+**Accessibility**: WCAG AA minimum. Full keyboard navigation, proper ARIA labels, focus states, and screen-reader friendly. The training experience must be usable on a venue laptop or tablet.
+
+### Technical Stack (Strict)
+- Next.js 15 (App Router) + TypeScript
+- Tailwind CSS v4 + shadcn/ui (install via CLI and customize theme)
+- Framer Motion for subtle professional animations
+- Zustand or Jotai for global state (progress, current module, etc.)
+- React Hook Form + Zod where forms are needed
+- Sonner or built-in toast system for feedback
+- Lucide-react icons
+- No unnecessary heavy libraries
+
+The entire app must be a single cohesive Next.js project that runs with `npm run dev` after `npm install`.
+
+### Information Architecture & Key Pages
+1. **Landing Page** (public)
+   - Powerful hero with tagline: something like "Master the 2:00 AM Load-Out. Build Unbreakable Stop-Work Authority."
+   - Value propositions focused on real touring hazards (wind, rigging, fatigue, production pressure, expensive gear)
+   - Brief "How It Works" (Theory → Deliberate Practice → AI Feedback → Certification)
+   - Strong CTA to enter the platform
+
+2. **Learning Hub / Dashboard** (main authenticated-feeling area — use simple local state or localStorage; no real auth needed for v1)
+   - Overall progress + certification status
+   - Circular or beautiful progress rings per module
+   - "Continue Training" quick action
+   - Grid of all modules with status (Not Started / In Progress / Passed / Needs Retry)
+   - Quick access to AI Tutor and Safety Engine Simulator
+
+3. **Module Detail + Interactive Trainer** (the heart of the product)
+   - Beautifully rendered module content (port all text, scenarios, tables, and "Tour Reality" sections from the source files with excellent typography and callouts)
+   - "Begin Interactive Scenarios" section
+   - Free-text decision input (like the excellent prototype HTML you already have)
+   - Hybrid grading system:
+     - First pass: keyword matching against the pass/fail concept lists from each scenario
+     - Second pass / nuanced feedback: structured LLM call (Anthropic) with a very tight system prompt that references the exact technique name and gives instructor-style feedback
+     - Always surface the named technique (e.g., "Caster-Spin Alignment", "Up-Look Protocol", "Sail Effect Wind-Load Derating")
+   - After each scenario: Clear verdict badge (Correct / Not Quite) + explanation + "Next Scenario"
+   - At module end: Score + Pass/Fail threshold (recommend 60-70% to pass) + option to retry weak areas
+
+4. **Safety Engine Simulator** (standalone powerful tool)
+   - Fully ported and beautiful TypeScript version of your `TelehandlerSafetyEngine`
+   - Clean form with all inputs (load weight, ground type dropdown with concert-specific options like FESTIVAL_MUD / STAGE_DECK / DYNAMIC_TRUSS, wind speed, boom angle, reach, lift height, time of day, shift duration, rigging_zone_clear, pushers_present, etc.)
+   - Live output panel showing status (GO / CAUTION / HARD_STOP / BLOCKER) with full reasoning, derated capacity, and any impact force calculations
+   - Preset "Tour Scenarios" buttons that load realistic dangerous conditions
+
+5. **AI Safety Tutor** (floating or dedicated chat)
+   - Persistent conversational agent with deep knowledge of the entire curriculum
+   - Can explain concepts, create custom scenarios, quiz the user, and reinforce Stop-Work Authority language
+   - Context-aware of the current module when possible
+
+6. **Certification & Progress**
+   - Beautiful digital certificate generation (name + date + unique ID + "Certified Tour-Ready Telehandler Operator — Concert & Festival Production")
+   - Downloadable (PDF or nice image)
+   - Full progress history and weak-area recommendations
+
+7. **Resources / Knowledge Base**
+   - Searchable quick-reference cards for every named technique
+   - Printable "Quick Reference Rule Card" version of your existing one
+   - Glossary
+
+### Extensibility — Critical Requirement
+Design the entire system so that **adding new lessons or modules in the future requires almost zero code changes**.
+
+- Create a single, well-documented central configuration file (e.g. `lib/lessons.ts` or `data/lessons.ts`)
+- Define a clear TypeScript schema/interface for lessons and scenarios
+- The interactive trainer must be generic and powerful enough to handle the vast majority of future lessons using only data
+- Document clearly in the generated README exactly how to add a new module (add object to array + optional custom interactive component only if truly needed)
+- Ideally include a very simple "Lesson Builder" view or instructions so non-technical users can extend content later
+
+### Specific Implementation Details
+- Port the full `TelehandlerSafetyEngine` logic faithfully into TypeScript (same calculations, same GROUND_DERATE map with concert-specific keys, fatigue modifier, falling object physics, etc.). Make it the single source of truth for any safety evaluation in the app.
+- The interactive grading experience should feel even better and more instructor-like than the excellent `concert_forklift_trainer.html` prototype you already have.
+- Progress must persist in localStorage (with export/import JSON capability).
+- Make the whole experience feel offline-capable / reliable in a venue environment.
+
+### Polish & Professionalism Mandates
+- Subtle but delightful micro-interactions on every card, button, and state change
+- Excellent loading skeletons and empty states
+- Professional, concise, high-signal copy throughout
+- Beautiful handling of the "STOP" command emphasis and fatigue/pressure scenarios
+- The platform must feel like serious professional development, not entertainment
+
+### Output Requirements
+Generate a **complete, self-contained Next.js 15 + TypeScript project** with:
+- All necessary files and folders properly structured
+- `package.json` with correct dependencies
+- A high-quality `README.md` that includes:
+  - Exact setup instructions
+  - How to configure an Anthropic API key (optional — for full AI grading)
+  - Clear, step-by-step instructions for adding new modules/lessons in the future
+  - How to run the Safety Engine Simulator standalone
+- The app must run perfectly on first `npm install && npm run dev`
+
+Before you start coding, internally plan the architecture, component breakdown, and data flow so the result is clean, maintainable, and extensible.
+
+Now build it.

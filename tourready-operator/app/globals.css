@@ -1,0 +1,633 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────────
+   TOURREADY OPERATOR — DESIGN TOKENS
+   Dark professional industrial palette. WCAG-AA contrast on all text tokens.
+   Display face: Barlow Condensed — a grotesque drawn from US highway-signage
+   letterforms. Freight, placards, caution decals: the native type of this
+   world. Body stays Inter for long-form legibility.
+   ───────────────────────────────────────────────────────────────────────── */
+@theme {
+  --color-bg: #0b1120;
+  --color-bg-deep: #050810;
+  --color-surface: #111827;
+  --color-surface-2: #1f2937;
+  --color-elevated: #1a2436;
+
+  --color-accent: #f97316; /* Safety Orange */
+  --color-accent-soft: rgba(249, 115, 22, 0.12);
+  --color-amber: #fbbf24; /* beacon core */
+  --color-ember: #ef4444; /* hot end of the gradient ramp */
+  --color-coolbeam: #7db0ff; /* followspot counter-light */
+
+  --color-go: #22c55e;
+  --color-caution: #f59e0b;
+  --color-hardstop: #ef4444;
+  --color-blocker: #dc2626;
+
+  --color-text: #f8fafc;
+  --color-muted: #94a3b8;
+  --color-border: #334155;
+  --color-border-soft: #1e293b;
+
+  /* Light-canvas pair — used ONLY by the homepage's marketing-section wrapper
+     and the global footer, both of which sit on a cream backdrop instead of
+     the dark app-shell background. Deliberately separate from --color-bg/
+     --color-text/--color-muted above: those are still referenced directly
+     (by name) as an explicit dark-surface color throughout many components
+     (Hero gradient, step cards, CTA card) and by every functional app page
+     (dashboard, module lessons, simulator, certificate, resources) — redefining
+     them would flip all of that to cream too, not just the marketing gutter. */
+  --color-page-bg: #f5ede0;
+  --color-canvas-ink: #1c1410;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --font-display: "Barlow Condensed", "Arial Narrow", ui-sans-serif, system-ui,
+    sans-serif;
+
+  --radius-card: 14px;
+
+  --shadow-card: 0 1px 0 0 rgba(255, 255, 255, 0.03) inset,
+    0 8px 30px -12px rgba(0, 0, 0, 0.6);
+  --shadow-glow-accent: 0 0 0 1px rgba(249, 115, 22, 0.4),
+    0 8px 30px -10px rgba(249, 115, 22, 0.25);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border-soft);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "cv02", "cv03", "cv04", "ss01";
+  }
+
+  /* High-visibility focus ring — keyboard navigation must be obvious. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: rgba(249, 115, 22, 0.3);
+    color: #fff;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.02em;
+  }
+
+  /* Industrial scrollbar — a thin rail with a safety-orange grab. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-deep);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-surface-2);
+    border-radius: 5px;
+    border: 2px solid var(--color-bg-deep);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent);
+  }
+}
+
+/* Display type: signage voice. Condensed, tall, tracked for stencil presence. */
+.type-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.015em;
+  line-height: 0.94;
+}
+
+/* Eyebrow label — small placard chip above section titles. */
+.type-eyebrow {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: 0.75rem;
+}
+
+/* Hot-metal safety-orange for key display lines.
+   NOTE: a gradient + background-clip:text was tried here, but this headline is
+   revealed word-by-word (each word is a child <span>), and background-clip:text
+   only clips onto an element's OWN text — so the parent's clipped gradient never
+   reached the child glyphs and the letters rendered transparent (invisible) on
+   many devices. A solid fill is crisp and reliably visible everywhere. */
+.text-hot {
+  color: var(--color-accent);
+  -webkit-text-fill-color: var(--color-accent);
+  /* Single soft halo — keeps the hot-metal glow without blurring the letters. */
+  filter: drop-shadow(0 0 14px rgba(249, 115, 22, 0.3));
+}
+
+/* Subtle industrial grid texture for hero / surfaces. */
+.bg-grid {
+  background-image: linear-gradient(
+      to right,
+      rgba(148, 163, 184, 0.06) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.bg-radial-accent {
+  background: radial-gradient(
+    900px 500px at 70% -10%,
+    rgba(249, 115, 22, 0.16),
+    transparent 60%
+  );
+}
+
+/* Hide scrollbars on horizontal chip rows while keeping scroll. */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Screen-reader-only utility. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   COSMETIC ATMOSPHERE v2 — "the arena floor at 2:00 AM"
+   A 3D perspective floor, a lighting truss with three theatrical beams
+   (one rotator, two oscillating followspots), drifting haze, floating dust,
+   caution-chevron tape, an LED safety ribbon, and film grain. Pure CSS/SVG —
+   the app stays offline-capable. All motion honors prefers-reduced-motion.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* The arena floor: a grid plane pitched away from the camera. The animated
+   background-position reads as the machine rolling forward over the deck. */
+.floor-3d {
+  position: absolute;
+  left: 50%;
+  bottom: -4%;
+  width: 240%;
+  height: 78%;
+  transform: translateX(-50%) perspective(560px) rotateX(63deg);
+  transform-origin: 50% 100%;
+  pointer-events: none;
+  background-image: linear-gradient(
+      to right,
+      rgba(249, 115, 22, 0.16) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(249, 115, 22, 0.11) 1px, transparent 1px);
+  background-size: 68px 68px;
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.95) 25%, transparent 82%);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.95) 25%, transparent 82%);
+  animation: floor-drive 3.4s linear infinite;
+}
+@keyframes floor-drive {
+  to {
+    background-position: 0 68px;
+  }
+}
+
+/* The glowing seam where floor meets darkness — the far edge of the venue. */
+.horizon-glow {
+  position: absolute;
+  left: 50%;
+  bottom: 30%;
+  height: 2px;
+  width: 120%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(249, 115, 22, 0.45) 30%,
+    rgba(255, 200, 140, 0.7) 50%,
+    rgba(249, 115, 22, 0.45) 70%,
+    transparent
+  );
+  filter: blur(3px);
+  opacity: 0.6;
+}
+
+/* Lighting truss across the top of the hero: the fixtures the beams hang from. */
+.truss {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(680px, 86%);
+  height: 3px;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to right,
+    rgba(148, 163, 184, 0.28) 0 14px,
+    transparent 14px 22px
+  );
+}
+.truss-fixture {
+  position: absolute;
+  top: -3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #ffe8c9 0%, var(--color-accent) 55%, transparent 75%);
+  box-shadow: 0 0 14px 3px rgba(249, 115, 22, 0.65);
+  animation: fixture-flicker 4.6s ease-in-out infinite;
+}
+.truss-fixture--cool {
+  background: radial-gradient(circle, #eaf3ff 0%, var(--color-coolbeam) 55%, transparent 75%);
+  box-shadow: 0 0 14px 3px rgba(125, 176, 255, 0.55);
+}
+@keyframes fixture-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  47% {
+    opacity: 0.75;
+  }
+  52% {
+    opacity: 1;
+  }
+  81% {
+    opacity: 0.85;
+  }
+}
+
+/* ── Followspot beams ─────────────────────────────────────────────────────
+   Each beam is a conic wedge with a hot near-white core wrapped in a warm
+   bloom, blended with `screen` over the scene. One rotates full circle like
+   a beacon; two swing back and forth like manned followspots. */
+.beacon-sweep {
+  position: absolute;
+  left: 50%;
+  top: -40%;
+  height: 155%;
+  aspect-ratio: 1 / 1;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(249, 115, 22, 0.1) 6deg,
+    rgba(255, 186, 110, 0.4) 10deg,
+    rgba(255, 240, 220, 0.75) 12deg,
+    rgba(255, 186, 110, 0.4) 14deg,
+    rgba(249, 115, 22, 0.12) 22deg,
+    transparent 34deg,
+    transparent 360deg
+  );
+  filter: blur(10px);
+  opacity: 1;
+  mix-blend-mode: screen;
+  animation: beacon-rotate 16s linear infinite;
+}
+
+/* Followspot 2 — hung stage-left, swings in a ±36° arc, warm. */
+.beacon-sweep-2 {
+  left: 22%;
+  top: -52%;
+  height: 165%;
+  background: conic-gradient(
+    from 155deg,
+    transparent 0deg,
+    rgba(249, 115, 22, 0.08) 5deg,
+    rgba(255, 200, 130, 0.34) 9deg,
+    rgba(255, 245, 228, 0.6) 11deg,
+    rgba(255, 200, 130, 0.3) 13deg,
+    rgba(249, 115, 22, 0.08) 20deg,
+    transparent 30deg,
+    transparent 360deg
+  );
+  opacity: 0.95;
+  animation: spot-swing-a 13s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+/* Followspot 3 — hung stage-right, tighter and cool-white, counter-swing. */
+.beacon-sweep-3 {
+  left: 78%;
+  top: -48%;
+  height: 155%;
+  background: conic-gradient(
+    from 205deg,
+    transparent 0deg,
+    rgba(125, 176, 255, 0.08) 4deg,
+    rgba(196, 220, 255, 0.34) 7deg,
+    rgba(240, 248, 255, 0.6) 9deg,
+    rgba(196, 220, 255, 0.3) 11deg,
+    rgba(125, 176, 255, 0.07) 17deg,
+    transparent 26deg,
+    transparent 360deg
+  );
+  filter: blur(9px);
+  opacity: 0.85;
+  animation: spot-swing-b 10.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+@keyframes beacon-rotate {
+  to {
+    transform: translateX(-50%) rotate(360deg);
+  }
+}
+@keyframes spot-swing-a {
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(-34deg);
+  }
+  50% {
+    transform: translateX(-50%) rotate(30deg);
+  }
+}
+@keyframes spot-swing-b {
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(26deg);
+  }
+  50% {
+    transform: translateX(-50%) rotate(-30deg);
+  }
+}
+
+.beacon-sweep,
+.beacon-sweep-2,
+.beacon-sweep-3 {
+  will-change: transform;
+}
+
+/* Small screens: keep one hero beam and thin the mote field — same mood,
+   half the GPU cost on phones. */
+@media (max-width: 640px) {
+  .beacon-sweep-2,
+  .beacon-sweep-3 {
+    display: none;
+  }
+  .mote:nth-of-type(2n) {
+    display: none;
+  }
+}
+
+/* The show clock — a small LED readout chip. The colon breathes like a
+   digital board; the whole curriculum is anchored on this hour. */
+.led-clock {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--color-amber);
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.55);
+}
+.led-clock .tick {
+  animation: led-tick 1.6s steps(1) infinite;
+}
+@keyframes led-tick {
+  50% {
+    opacity: 0.25;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .led-clock .tick {
+    animation: none;
+  }
+}
+
+/* Drifting arena haze — soft blurred pools of light that breathe and float. */
+.haze {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(60px);
+  mix-blend-mode: screen;
+}
+.haze-a {
+  width: 42rem;
+  height: 42rem;
+  left: -8rem;
+  top: -14rem;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.16), transparent 62%);
+  animation: haze-drift-a 22s ease-in-out infinite;
+}
+.haze-b {
+  width: 34rem;
+  height: 34rem;
+  right: -6rem;
+  top: 2rem;
+  background: radial-gradient(circle, rgba(56, 132, 255, 0.1), transparent 64%);
+  animation: haze-drift-b 27s ease-in-out infinite;
+}
+
+@keyframes haze-drift-a {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(3rem, 2rem) scale(1.08);
+    opacity: 1;
+  }
+}
+@keyframes haze-drift-b {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1.05);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-2.5rem, 1.5rem) scale(1);
+    opacity: 0.9;
+  }
+}
+
+/* Dust motes caught in the beams — tiny embers drifting up through the light. */
+.mote {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: rgba(255, 196, 130, 0.85);
+  filter: blur(0.5px);
+  opacity: 0;
+  animation: mote-float var(--mote-dur, 9s) linear infinite;
+  animation-delay: var(--mote-delay, 0s);
+}
+.mote--cool {
+  background: rgba(190, 216, 255, 0.8);
+}
+@keyframes mote-float {
+  0% {
+    transform: translate(0, 24px) scale(0.8);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  70% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(var(--mote-drift, 16px), -150px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* Caution-chevron hazard tape — the black-and-orange diagonal stripe painted
+   on machinery and floor edges. Used as a "work zone" structural divider. */
+.hazard-tape {
+  height: 10px;
+  width: 100%;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-accent) 0,
+    var(--color-accent) 12px,
+    #0b1120 12px,
+    #0b1120 24px
+  );
+  opacity: 0.9;
+  background-size: 34px 34px;
+  animation: hazard-scroll 2.2s linear infinite;
+}
+@keyframes hazard-scroll {
+  to {
+    background-position: 34px 0;
+  }
+}
+
+/* LED safety ribbon — the scrolling arena ribbon board of stop-work mantras. */
+.ribbon-track {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  will-change: transform;
+  animation: ribbon-scroll 34s linear infinite;
+}
+.ribbon-mask {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+}
+@keyframes ribbon-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Pulsing amber beacon dot (logo + accents). */
+.beacon-dot {
+  animation: beacon-pulse 2.4s ease-in-out infinite;
+}
+@keyframes beacon-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 6px 0 rgba(249, 115, 22, 0.9);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 12px 3px rgba(249, 115, 22, 0.55);
+    opacity: 0.7;
+  }
+}
+
+/* Hover warning-stripe that wipes across a card's top edge. */
+.warn-stripe {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-accent) 0,
+    var(--color-accent) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+}
+
+/* Dashed "load path" connector behind the process steps. */
+.load-path {
+  background-image: linear-gradient(
+    to right,
+    var(--color-border) 0,
+    var(--color-border) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  background-size: 16px 2px;
+  background-repeat: repeat-x;
+  background-position: 0 center;
+}
+
+/* Film grain — one fixed SVG-noise wash that unifies every surface. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 30; /* under the sticky header (40), tutor (50), and toasts */
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  mix-blend-mode: overlay;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beacon-sweep,
+  .beacon-sweep-2,
+  .beacon-sweep-3,
+  .haze-a,
+  .haze-b,
+  .hazard-tape,
+  .ribbon-track,
+  .beacon-dot,
+  .floor-3d,
+  .mote,
+  .truss-fixture {
+    animation: none !important;
+  }
+  .mote {
+    opacity: 0.35;
+  }
+}
+
+@media print {
+  .no-print,
+  .grain {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+}

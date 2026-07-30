@@ -1,0 +1,393 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+
+#app { display: flex; flex-direction: column; min-height: 600px; padding: 1rem 0; }
+
+.header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 0.5px solid var(--border); }
+.header-icon { width: 36px; height: 36px; background: #1a1a1a; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.header-title { font-size: 15px; font-weight: 500; color: var(--text-primary); }
+.header-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+.module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+.module-card { background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px; cursor: pointer; transition: border-color 0.15s; position: relative; }
+.module-card:hover { border-color: var(--border-strong); }
+.module-card.active { border-color: #d85a30; background: #faece7; }
+[data-mode="dark"] .module-card.active { background: #4a1b0c; border-color: #d85a30; }
+.module-card.locked { opacity: 0.45; cursor: not-allowed; }
+.module-card.completed { border-color: #1d9e75; }
+.mod-icon { font-size: 20px; margin-bottom: 6px; }
+.mod-name { font-size: 12px; font-weight: 500; color: var(--text-primary); line-height: 1.3; }
+.mod-score { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.mod-badge { position: absolute; top: 8px; right: 8px; font-size: 10px; padding: 2px 6px; border-radius: 20px; font-weight: 500; }
+.badge-pass { background: #eaf3de; color: #3b6d11; }
+[data-mode="dark"] .badge-pass { background: #173404; color: #c0dd97; }
+.badge-fail { background: #fcebeb; color: #a32d2d; }
+[data-mode="dark"] .badge-fail { background: #501313; color: #f09595; }
+
+.score-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 1.5rem; }
+.score-pill { font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: 500; background: var(--surface-1); border: 0.5px solid var(--border); color: var(--text-secondary); }
+.score-pill.certified { background: #eaf3de; color: #3b6d11; border-color: #639922; }
+[data-mode="dark"] .score-pill.certified { background: #173404; color: #c0dd97; border-color: #639922; }
+
+.chat-area { flex: 1; display: flex; flex-direction: column; gap: 0; }
+.messages { display: flex; flex-direction: column; gap: 12px; margin-bottom: 1rem; min-height: 200px; }
+
+.msg { display: flex; gap: 10px; align-items: flex-start; }
+.msg-avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; margin-top: 1px; }
+.msg-ai .msg-avatar { background: #1a1a1a; color: #fff; }
+.msg-user .msg-avatar { background: var(--bg-accent); color: var(--text-accent); }
+.msg-bubble { background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 10px; padding: 10px 13px; font-size: 14px; line-height: 1.6; color: var(--text-primary); max-width: 540px; }
+.msg-user { flex-direction: row-reverse; }
+.msg-user .msg-bubble { background: var(--bg-accent); border-color: var(--border-accent); color: var(--text-primary); }
+
+.verdict { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; padding: 3px 8px; border-radius: 20px; margin-bottom: 6px; }
+.verdict.pass { background: #eaf3de; color: #3b6d11; }
+.verdict.fail { background: #fcebeb; color: #a32d2d; }
+.verdict.caution { background: #faeeda; color: #854f0b; }
+[data-mode="dark"] .verdict.pass { background: #173404; color: #c0dd97; }
+[data-mode="dark"] .verdict.fail { background: #501313; color: #f09595; }
+[data-mode="dark"] .verdict.caution { background: #412402; color: #fac775; }
+
+.options-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.opt-btn { background: var(--surface-2); border: 0.5px solid var(--border-strong); border-radius: var(--radius); padding: 6px 12px; font-size: 13px; color: var(--text-primary); cursor: pointer; transition: background 0.1s; font-family: var(--font-sans); }
+.opt-btn:hover { background: var(--surface-1); }
+
+.input-row { display: flex; gap: 8px; align-items: flex-end; }
+.input-row textarea { flex: 1; border: 0.5px solid var(--border-strong); border-radius: var(--radius); padding: 8px 12px; font-size: 14px; font-family: var(--font-sans); color: var(--text-primary); background: var(--surface-2); resize: none; line-height: 1.5; min-height: 40px; max-height: 120px; }
+.input-row textarea:focus { outline: none; border-color: var(--border-stronger); }
+.send-btn { background: #1a1a1a; color: #fff; border: none; border-radius: var(--radius); padding: 8px 14px; font-size: 13px; cursor: pointer; font-family: var(--font-sans); flex-shrink: 0; height: 40px; }
+.send-btn:hover { background: #333; }
+.send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.loading-dots { display: inline-flex; gap: 4px; padding: 10px 13px; }
+.loading-dots span { width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%; animation: dot 1.2s infinite; }
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot { 0%,80%,100%{opacity:0.3;transform:scale(0.8)} 40%{opacity:1;transform:scale(1)} }
+
+.divider { text-align: center; font-size: 11px; color: var(--text-muted); margin: 4px 0; }
+
+.empty-state { text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: 14px; }
+.empty-state i { font-size: 32px; display: block; margin-bottom: 8px; color: var(--text-muted); }
+</style>
+
+<h2 class="sr-only">Concert Forklift AI Safety Training — interactive certification portal with per-module scoring</h2>
+
+<div id="app">
+  <div class="header">
+    <div class="header-icon">🏗️</div>
+    <div>
+      <div class="header-title">Tour-Ready Operator — AI Certification Trainer</div>
+      <div class="header-sub">Concert &amp; Festival Production · Forklift &amp; Telehandler</div>
+    </div>
+  </div>
+
+  <div class="module-grid" id="moduleGrid"></div>
+
+  <div class="score-bar" id="scoreBar"></div>
+
+  <div class="chat-area">
+    <div class="messages" id="messages">
+      <div class="empty-state">
+        <i class="ti ti-forklift" aria-hidden="true"></i>
+        Select a module above to begin your training session.
+      </div>
+    </div>
+    <div class="options-row" id="optionsRow"></div>
+    <div class="input-row" id="inputRow" style="display:none">
+      <textarea id="userInput" placeholder="Type your response or decision..." rows="1"></textarea>
+      <button class="send-btn" id="sendBtn">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const MODULES = [
+  { id: 0, name: "Basic controls", icon: "🎛️", key: "mod0" },
+  { id: 1, name: "Truck pack logistics", icon: "🚛", key: "mod1" },
+  { id: 2, name: "Fork slot anatomy", icon: "🔧", key: "mod2" },
+  { id: 3, name: "Ground crew choreography", icon: "🏃", key: "mod3" },
+  { id: 4, name: "Heavy physics", icon: "🌪️", key: "mod4" },
+  { id: 5, name: "Night chaos", icon: "🌙", key: "mod5" },
+  { id: 6, name: "Rigging coordination", icon: "🪝", key: "mod6" },
+  { id: 7, name: "Fatigue & pressure", icon: "⚠️", key: "mod7" },
+  { id: 8, name: "Capstone", icon: "🏆", key: "capstone" },
+];
+
+const CURRICULUM = {
+  mod0: {
+    title: "Module 0: Basic Telehandler & Forklift Controls",
+    questions: [
+      { q: "Which side do you always approach the forklift from, and why?", pass: ["left","left side"], fail: ["right","either"], concept: "Always approach from the left side — the standard egress/entry point on all production machines." },
+      { q: "You've picked up a 3,000 lb flight case and need to drive 40 feet to the truck bay. How do you carry it?", pass: ["low","4","8 inch","tilt back","tilted back"], fail: ["high","forward","level"], concept: "Travel with forks 4–8 inches off the ground and tilted slightly back. Never travel high." },
+      { q: "Name three items from your pre-operation inspection that would ground the machine immediately if failed.", pass: ["crack","leak","brake","seat belt","horn","tire"], fail: [], concept: "Cracked forks, fluid leaks under machine, and a failed parking brake are all immediate grounding conditions." },
+    ]
+  },
+  mod1: {
+    title: "Module 1: Truck Pack & Fork Pocket Logistics",
+    questions: [
+      { q: "You push a flight case into the truck and the swivel casters turn sideways, stealing 3 inches of pack width. What technique do you use?", pass: ["back off","jiggle","reverse","micro","inch back"], fail: ["push","force","ram"], concept: "Caster-Spin Alignment: back off one inch so casters can trail straight, then re-approach." },
+      { q: "The case you need is wedged tight. Pulling forward just drags the neighbor case with it. What's your first hydraulic move?", pass: ["side shift","side-shift","sideways","lateral","wiggle"], fail: ["lift","pull","reverse"], concept: "Use side-shift to break lateral friction before attempting to extract. Never pull blind." },
+      { q: "Your forks are 48 inches long. The cart is only 36 inches deep. How do you protect the ground crew on the far side?", pass: ["flush","visible","my side","short side","extra"], fail: ["full in","all the way"], concept: "Flush-Fork Rule: keep extra fork length visible on your side so tips don't become invisible hazards behind the load." },
+    ]
+  },
+  mod2: {
+    title: "Module 2: Fork Slot Anatomy & Precision Alignment",
+    questions: [
+      { q: "Inside a dark trailer you can't see the floor-level fork pockets on a scenic cart. How do you find the center without guessing?", pass: ["top","vertical rib","mast","symmetry","column","weld"], fail: ["headlight","guess","feel","slow"], concept: "Vertical Rib Symmetry: align your mast with the top structural lines. They're directly above the hidden floor slots." },
+      { q: "You switch on your headlights and look at the shadows cast by your forks. One shadow is wider than the other. What does that tell you?", pass: ["tilted","uneven","not level","angled","crooked"], fail: ["level","fine","nothing"], concept: "Level-Fork Shadow Trick: uneven shadows mean the forks are tilted and will bind inside the steel guide sleeves." },
+      { q: "A video wall cart is top-heavy with motors at the top. Only one fork pocket is accessible. What's your call?", pass: ["refuse","don't","stop","no","can't","single side","tip","dangerous"], fail: ["try","go","careful","slow"], concept: "Single-fork lifts on top-heavy loads are an immediate refusal. The center of gravity exits the stability triangle instantly." },
+    ]
+  },
+  mod3: {
+    title: "Module 3: Ground Crew Choreography",
+    questions: [
+      { q: "You back a rack out of the trailer and three stagehands rush in to grab it before your rear tires have stopped. What is your mandatory first action?", pass: ["stop","halt","freeze","clear","release","pause","neutral"], fail: ["lower","let them","drop","move"], concept: "Clear-and-Release Pause: full structural stop, neutral, forks down, wait for ground to settle before any hands touch the load." },
+      { q: "You need to make a 90-degree turn. Local crew is clustered 4 feet off your left flank. What do you do before turning?", pass: ["horn","tap","eye contact","halo","3 foot","clear","wait"], fail: ["turn","go","signal"], concept: "One short horn tap + eye contact confirms the 3-Foot Rear-Swing Halo is clear before any steering input." },
+      { q: "Four stagehands are pushing an 8-foot video frame cart on a direct collision course with you. Who yields?", pass: ["yield","stop","i stop","i yield","i wait","they can't see","blind"], fail: ["they yield","i have","horn","right of way"], concept: "Pusher's Blindness Yield Rule: the forklift always yields. Momentum + zero visibility = the operator must stop." },
+    ]
+  },
+  mod4: {
+    title: "Module 4: Heavy Physics & Venue Dynamics",
+    questions: [
+      { q: "You're lifting a 4,000 lb LED wall panel to 25 ft outdoors. Wind is steady at 15 mph. What must you do before raising the boom?", pass: ["derate","wind load","sail","reduce","capacity","stabilizer","outrigger"], fail: ["nothing","proceed","normal","fine"], concept: "Sail Effect Wind-Load Derating: a 15 mph wind can slash safe capacity 20–30% on flat surfaces. Derate and deploy outriggers." },
+      { q: "You're unloading 40-foot aluminum truss bundles from a flatbed. How do you configure your forks to prevent the truss from bowing?", pass: ["wide","spread","outer third","maximum width"], fail: ["center","narrow","close"], concept: "Wide Pick-Point Configuration: fork near the outer thirds of the load. Center picks on long truss cause severe structural deflection." },
+      { q: "You must drive over yellow cable ramp protectors covering high-voltage feeder lines. What's the crossing technique?", pass: ["45","angle","diagonal","one tire","stagger"], fail: ["straight","fast","slow and straight","perpendicular"], concept: "45-Degree Cable Bridge Crossing: one tire at a time over the ramp distributes weight and prevents crushing the cable jacket." },
+    ]
+  },
+  mod5: {
+    title: "Module 5: Night Load-In Chaos",
+    questions: [
+      { q: "Lighting crew fires high-intensity strobes directly above you at 1:15 AM. Your night vision is wiped out completely. What do you do?", pass: ["stop","freeze","halt","stand still","wait"], fail: ["slow","lean","edge","keep moving","continue"], concept: "Flash Blindness + STOP Rule: velocity drops to zero instantly. Never trust muscle memory during visual blackout." },
+      { q: "You need a tight turn on an NBA hardwood court covered with temporary plywood. What does 'tire scrubbing' mean and how do you avoid it?", pass: ["rolling","momentum","don't spin","stationary","moving turn","pivot"], fail: ["reverse","slow","careful"], concept: "Tire Scrubbing = stationary pivot turns that burn through plywood and scar hardwood. Keep rolling momentum during all turns." },
+      { q: "An arena has temporary insulated decking over an ice rink. You park a 6,000 lb stack of steel base plates center-court for 15 minutes. What risk are you ignoring?", pass: ["ice","compress","sag","tilt","deck","insulation","cold","sweat"], fail: ["fine","no risk","nothing"], concept: "Ice Rink Insulation Trap: heavy stationary loads compress the insulated panels, causing cold-sweating and surface tilt." },
+    ]
+  },
+  mod6: {
+    title: "Module 6: Rigging Coordination & Up-Look Protocol",
+    questions: [
+      { q: "You back toward center stage at 2:00 AM. High-riggers are active 60 feet above. What is your first action before entering the rigging zone?", pass: ["up-look","look up","scan","overhead","above","clear","sky"], fail: ["proceed","drive","honk","radio"], concept: "Up-Look Protocol: always scan the airspace before entering a rigging zone. A 2 lb shackle falling 60 ft hits with devastating force." },
+      { q: "A rigger drops a verbal warning while you have ground crew pushing a load in your path simultaneously. How do you handle both?", pass: ["stop","halo","up-look","both","overhead","clear ground"], fail: ["ground only","look up only","proceed","choose"], concept: "Call STOP, clear the 3-ft halo, then perform Up-Look. Never manage only one hazard at a time." },
+      { q: "You are about to pick up a 10,000 lb audio array using nylon slings choked around your bare forks. What load behavior changes compared to a rigid pallet?", pass: ["swing","pendulum","center of gravity","shift","unstable","sling","dynamic"], fail: ["same","fine","nothing"], concept: "Sling-suspended loads swing freely, dramatically shifting the machine's center of gravity compared to rigid pallet contact." },
+    ]
+  },
+  mod7: {
+    title: "Module 7: Fatigue, Pressure & Stop-Work Authority",
+    questions: [
+      { q: "It's 4:00 AM, 14 hours into your shift. You feel a microsleep coming on. The Tour Manager demands one final lift to make the truck time. What do you do?", pass: ["stop","refuse","stop-work","fatigue","relief","no","decline"], fail: ["push through","do it","just one","quick"], concept: "Stop-Work Authority: fatigue is the highest risk factor on site. Requesting relief is professionalism, not weakness." },
+      { q: "The Production Manager says: 'Just push the broken cart in — this truck has to roll!' The frame welds look stressed. Give me the exact professional language you use to refuse.", pass: ["load is compromised","stressed","unsafe","stop-work","structural","safety","cannot"], fail: ["okay","slow","shut up","argue","fine"], concept: "Use cold, objective terminology: 'load is compromised', 'stressed welds', 'unsafe to travel'. Strip emotion, state facts." },
+      { q: "What is 'hero operator' syndrome and why is it the most dangerous thing on a 2:00 AM load-out?", pass: ["push through","ignore","fatigue","no limits","invincible","tired","delayed reaction"], fail: ["saves show","good","fast"], concept: "Hero Operator = someone who ignores personal limits to 'save the show'. Exhausted operators have delayed reactions, tunnel vision, and kill careers and people." },
+    ]
+  },
+  capstone: {
+    title: "Capstone: The 2:00 AM Arena Load-Out",
+    questions: [
+      { q: "BRIEFING: 2:00 AM. 14 hours in. Wind 17 mph. 10,000 lb LED wall. High-riggers 60 ft up. Haze and dim light. You approach the rigging zone — what is your very first action?", pass: ["up-look","look up","scan","above","overhead"], fail: ["drive","lift","proceed"], concept: "Up-Look Protocol is always first in any rigging zone — period." },
+      { q: "As you raise the boom, wind gusts to 17 mph. Your load is the LED wall — a massive sail surface. What do you call and what do you do?", pass: ["stop","hard stop","15 mph","wind","halt","hold"], fail: ["continue","raise","try"], concept: "HARD STOP at >15 mph wind threshold. Stop-Work Authority. LED walls derate heavily for sail effect — this is a tip-over scenario." },
+      { q: "Ground crew rushes in to guide the load before you've confirmed the halo is clear. What is your protocol — in exact sequence?", pass: ["stop","echo","halo","3 foot","clear","up-look"], fail: ["lower","let them","proceed"], concept: "Call STOP → wait for echo → confirm 3-ft halo clear → Up-Look → only then proceed." },
+      { q: "You feel a microsleep begin. The Tour Manager is screaming. Final question: what do you do, and why does it protect the tour more than pushing through?", pass: ["stop","relief","stop-work","refuse","fatigue","injury","cancel","insurance"], fail: ["push","finish","quick"], concept: "Request relief and invoke Stop-Work Authority. A fatigue accident cancels the tour permanently. A 5-minute delay does not." },
+    ]
+  }
+};
+
+const PASS_THRESHOLD = 0.6;
+
+let state = {
+  scores: {},
+  activeModule: null,
+  qIndex: 0,
+  history: [],
+  waiting: false,
+  currentPassCount: 0,
+  currentTotal: 0,
+};
+
+function renderModules() {
+  const grid = document.getElementById("moduleGrid");
+  grid.innerHTML = MODULES.map(m => {
+    const s = state.scores[m.key];
+    const pct = s ? Math.round((s.pass / s.total) * 100) : null;
+    const passed = s && s.pass / s.total >= PASS_THRESHOLD;
+    const isActive = state.activeModule === m.key;
+    return `<div class="module-card ${isActive ? 'active' : ''} ${passed ? 'completed' : ''}" onclick="startModule('${m.key}')">
+      ${s ? `<span class="mod-badge ${passed ? 'badge-pass' : 'badge-fail'}">${passed ? '✓ Pass' : '✗ Retry'}</span>` : ''}
+      <div class="mod-icon">${m.icon}</div>
+      <div class="mod-name">${m.name}</div>
+      <div class="mod-score">${s ? `${s.pass}/${s.total} correct · ${pct}%` : 'Not started'}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderScoreBar() {
+  const bar = document.getElementById("scoreBar");
+  const total = MODULES.length;
+  const passed = MODULES.filter(m => {
+    const s = state.scores[m.key];
+    return s && s.pass / s.total >= PASS_THRESHOLD;
+  }).length;
+  const certified = passed === total;
+  bar.innerHTML = `<span class="score-pill ${certified ? 'certified' : ''}">${certified ? '🏆 Certified' : `${passed}/${total} modules passed`}</span>
+    ${Object.keys(state.scores).length > 0 ? `<span class="score-pill">${Object.values(state.scores).reduce((a,b) => a + b.pass, 0)} correct answers total</span>` : ''}`;
+}
+
+function addMessage(role, html, verdict) {
+  const msgs = document.getElementById("messages");
+  const div = document.createElement("div");
+  div.className = `msg msg-${role}`;
+  const avatarText = role === 'ai' ? 'AI' : 'You';
+  let verdictHtml = '';
+  if (verdict) {
+    verdictHtml = `<div class="verdict ${verdict.type}"><i class="ti ti-${verdict.icon}" aria-hidden="true"></i>${verdict.label}</div>`;
+  }
+  div.innerHTML = `<div class="msg-avatar">${avatarText}</div><div class="msg-bubble">${verdictHtml}${html}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addLoading() {
+  const msgs = document.getElementById("messages");
+  const div = document.createElement("div");
+  div.className = "msg msg-ai";
+  div.id = "loadingMsg";
+  div.innerHTML = `<div class="msg-avatar">AI</div><div class="msg-bubble"><div class="loading-dots"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeLoading() {
+  const el = document.getElementById("loadingMsg");
+  if (el) el.remove();
+}
+
+function startModule(key) {
+  state.activeModule = key;
+  state.qIndex = 0;
+  state.history = [];
+  state.currentPassCount = 0;
+  state.currentTotal = 0;
+  renderModules();
+
+  const msgs = document.getElementById("messages");
+  msgs.innerHTML = '';
+
+  const mod = CURRICULUM[key];
+  addMessage('ai', `<strong>${mod.title}</strong><br><br>This module has ${mod.questions.length} scenarios. Answer each one as if you're on the job — no multiple choice, just your real decision.<br><br>Ready? Here's your first scenario.`);
+
+  setTimeout(() => askQuestion(), 600);
+  document.getElementById("inputRow").style.display = "flex";
+  document.getElementById("optionsRow").innerHTML = '';
+}
+
+function askQuestion() {
+  const mod = CURRICULUM[state.activeModule];
+  if (state.qIndex >= mod.questions.length) {
+    finishModule();
+    return;
+  }
+  const q = mod.questions[state.qIndex];
+  const num = state.qIndex + 1;
+  addMessage('ai', `<span style="font-size:11px;color:var(--text-muted)">Scenario ${num} of ${mod.questions.length}</span><br><br>${q.q}`);
+}
+
+async function gradeAnswer(userText) {
+  const mod = CURRICULUM[state.activeModule];
+  const q = mod.questions[state.qIndex];
+
+  addLoading();
+  state.waiting = true;
+  document.getElementById("sendBtn").disabled = true;
+
+  const systemPrompt = `You are a strict but fair safety instructor for concert/festival forklift and telehandler operations. Grade the student's answer to the scenario question. 
+
+SCENARIO: ${q.q}
+PASSING KEYWORDS (must include at least one concept): ${q.pass.join(', ')}
+FAILING KEYWORDS (clear wrong answers): ${q.fail.join(', ')}
+CORE CONCEPT: ${q.concept}
+
+Respond with ONLY a JSON object:
+{
+  "verdict": "PASS" or "FAIL",
+  "feedback": "2-3 sentences of crisp instructor feedback. If PASS: affirm the specific correct technique by name, add one pro tip. If FAIL: explain exactly what went wrong and what the correct action is. Never use the word 'JSON'. Always end with the named technique or rule."
+}`;
+
+  try {
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: "user", content: userText }]
+      })
+    });
+    const data = await resp.json();
+    let raw = data.content.map(c => c.text || '').join('');
+    raw = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(raw);
+
+    removeLoading();
+
+    const passed = parsed.verdict === "PASS";
+    if (passed) state.currentPassCount++;
+    state.currentTotal++;
+
+    addMessage('ai', parsed.feedback, {
+      type: passed ? 'pass' : 'fail',
+      icon: passed ? 'check' : 'x',
+      label: passed ? 'Correct' : 'Not quite'
+    });
+
+    state.qIndex++;
+
+    if (state.qIndex < mod.questions.length) {
+      setTimeout(() => askQuestion(), 800);
+    } else {
+      setTimeout(() => finishModule(), 800);
+    }
+  } catch(e) {
+    removeLoading();
+    addMessage('ai', 'Connection issue — please try again.');
+  }
+
+  state.waiting = false;
+  document.getElementById("sendBtn").disabled = false;
+}
+
+function finishModule() {
+  const key = state.activeModule;
+  state.scores[key] = { pass: state.currentPassCount, total: state.currentTotal };
+
+  const pct = Math.round((state.currentPassCount / state.currentTotal) * 100);
+  const passed = state.currentPassCount / state.currentTotal >= PASS_THRESHOLD;
+
+  addMessage('ai', `<strong>Module complete.</strong><br><br>Score: ${state.currentPassCount}/${state.currentTotal} correct (${pct}%)<br><br>${passed
+    ? `✅ <strong>Module passed.</strong> You demonstrated solid safety fundamentals. Select the next module to continue toward full certification.`
+    : `❌ <strong>Module not passed.</strong> You need ${Math.ceil(PASS_THRESHOLD * state.currentTotal)} correct to pass. Review the scenarios and retry this module — safety knowledge must be automatic under pressure.`
+  }`);
+
+  document.getElementById("inputRow").style.display = "none";
+  renderModules();
+  renderScoreBar();
+}
+
+document.getElementById("sendBtn").addEventListener("click", sendAnswer);
+document.getElementById("userInput").addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendAnswer(); }
+});
+
+function sendAnswer() {
+  if (state.waiting) return;
+  const ta = document.getElementById("userInput");
+  const text = ta.value.trim();
+  if (!text || !state.activeModule) return;
+  addMessage('user', text);
+  ta.value = '';
+  gradeAnswer(text);
+}
+
+renderModules();
+renderScoreBar();
+</script>

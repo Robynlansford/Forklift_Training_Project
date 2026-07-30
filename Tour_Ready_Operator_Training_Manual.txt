@@ -1,0 +1,642 @@
+================================================================
+   TOUR-READY OPERATOR
+   CONCERT & FESTIVAL FORKLIFT SAFETY TRAINING MANUAL
+================================================================
+   For: Forklift & Telehandler Operators
+   Industry: Live Event / Concert Production
+   Version: 1.0
+================================================================
+
+IMPORTANT NOTE
+--------------
+This manual is a training supplement. It does NOT replace
+official OSHA certification or supervised hands-on training.
+Always complete required certifications before operating
+any lift equipment.
+
+----------------------------------------------------------------
+
+HOW TO USE THIS MANUAL
+-----------------------
+Read each module in order. Each one builds on the last.
+Every section follows this simple format:
+
+   WHAT IT IS  — The concept explained in plain English
+   WHY IT MATTERS — What goes wrong if you skip it
+   HOW TO DO IT — Step-by-step instructions
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+MODULE 0: BASIC MACHINE CONTROLS
+=================================
+
+STEP 1 — PRE-OPERATION INSPECTION (Do this EVERY time)
+-------------------------------------------------------
+Before you start the machine, walk around it and check:
+
+   1. Tires — no cracks, properly inflated
+   2. Forks or boom — no cracks, no bent tips
+   3. Under the machine — no fluid leaks on the ground
+   4. Seat belt — buckles and holds
+   5. Mirrors — clean and adjusted
+   6. Horn — press it, confirm it works
+   7. Lights — all working
+   8. Parking brake — set it, confirm machine does not roll
+
+If ANY of these fail — DO NOT operate the machine.
+Report it immediately to your supervisor.
+
+STEP 2 — GETTING INTO THE MACHINE
+----------------------------------
+   1. Always approach from the LEFT side
+   2. Use the steps and handrails — never jump up or down
+   3. Sit fully back in the seat
+   4. Adjust so you can reach all pedals comfortably
+   5. Buckle your seat belt EVERY single time
+   6. Confirm the machine is in NEUTRAL
+   7. Engage the parking brake before starting
+
+STEP 3 — STARTING THE MACHINE
+------------------------------
+   1. Key in, turn to start
+   2. Let the engine warm up 30-60 seconds before moving
+   3. Test the horn — one quick tap
+   4. Test the brakes — press gently, confirm response
+   5. Test the hydraulics — raise forks slightly, lower back down
+
+STEP 4 — MAIN CONTROLS (Sit-Down Forklift)
+-------------------------------------------
+   Steering Wheel   — turns left/right like a car
+   Accelerator      — right foot, gentle pressure
+   Brake Pedal      — right foot, slows and stops
+   Parking Brake    — lever or button, use when parked
+   Mast Lift Lever  — pull back = forks go UP
+                      push forward = forks go DOWN
+   Mast Tilt Lever  — pull back = forks tilt back (safer)
+                      push forward = forks tilt forward
+   Side-Shift       — moves both forks left or right together
+   Horn             — button on steering wheel
+
+STEP 5 — TELEHANDLER-SPECIFIC CONTROLS
+---------------------------------------
+   Boom Lift        — raises/lowers the entire boom arm
+   Boom Extend      — makes boom longer (reaching high trusses)
+   Boom Retract     — shortens the boom back in
+   Boom Tilt        — adjusts fork angle at end of boom
+   Outriggers       — extend from sides for stability on tall lifts
+   Steering Modes   — switch between 2-wheel, 4-wheel, and crab
+
+STEP 6 — PICKING UP A LOAD
+---------------------------
+   1. Approach straight on — never at an angle
+   2. Stop about 1 foot away from the load
+   3. Lower forks to the correct entry height
+   4. Level the forks (not tilted forward or back yet)
+   5. Drive forward SLOWLY until forks are fully under the load
+   6. Lift slightly — just enough to clear the ground
+   7. Tilt forks back a little for stability
+   8. Reverse slowly away from the rack or truck
+
+STEP 7 — TRAVELING WITH A LOAD
+--------------------------------
+   - Keep the load LOW (4 to 8 inches off the ground)
+   - Tilt forks slightly BACK
+   - Drive slowly
+   - Always look in the direction you are traveling
+   - Honk before entering intersections or blind corners
+
+STEP 8 — PLACING A LOAD
+------------------------
+   1. Approach straight on
+   2. Raise to the correct placement height
+   3. Drive forward slowly into position
+   4. Lower the load gently until it is stable
+   5. Tilt forks slightly forward to release
+   6. Back away slowly — confirm load is stable before leaving
+
+STEP 9 — PARKING AND SHUTDOWN
+------------------------------
+   1. Lower forks completely to the ground
+   2. Tilt forks slightly forward so they rest flat
+   3. Shift to NEUTRAL
+   4. Set the parking brake
+   5. Turn off the engine
+   6. Remove the key
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+MODULE 1: TRUCK PACK & FORK POCKET LOGISTICS
+=============================================
+
+WHY THIS MATTERS
+----------------
+In touring production, every inch inside a 53-foot truck counts.
+One bad pack means the doors won't close, gear gets damaged,
+or the whole load shifts on the highway.
+
+STEP 1 — THE CASTER-SPIN ALIGNMENT (Sideways casters)
+------------------------------------------------------
+Problem: You push a flight case forward and the swivel casters
+turn sideways, stealing 2-3 inches of pack width.
+
+How to fix it:
+   1. Push the case forward until you feel the casters resist
+   2. Back off ONE inch — just one inch
+   3. The casters will swing back to trail straight
+   4. Push forward again — the case will now seat flush
+   5. Never force it. Brute force buckles caster mounts.
+
+STEP 2 — BREAKING FRICTION ON A PACKED CASE
+---------------------------------------------
+Problem: A case is wedged so tightly that pulling it forward
+drags the neighboring case with it.
+
+How to fix it:
+   1. Do NOT pull forward yet
+   2. Use the SIDE-SHIFT function first
+   3. Shift left and right slightly to break the friction grip
+   4. Once the case moves laterally, THEN pull it forward
+   5. This protects the neighboring cart from lifting or tipping
+
+STEP 3 — THE FLUSH-FORK RULE
+------------------------------
+Problem: Your forks are 48 inches long but the cart is only
+36 inches deep. The fork tips stick out the back — invisible
+to anyone standing behind the cart.
+
+How to handle it:
+   1. Do not push the forks all the way through
+   2. Keep the extra fork length visible ON YOUR SIDE
+   3. The tips stay in front of the cart, where you can see them
+   4. This prevents stabbing anyone standing behind the load
+   5. Drill this habit — it takes one second and saves lives
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+MODULE 2: FORK SLOT ANATOMY & PRECISION ALIGNMENT
+==================================================
+
+WHY THIS MATTERS
+----------------
+Concert equipment is custom-built and expensive. Missing the
+fork pocket by 1 inch means your forks punch through the
+cosmetic aluminum skin and destroy what's inside.
+
+STEP 1 — SKIN VS. SLOT (Know what you're looking at)
+------------------------------------------------------
+   COSMETIC SKIN  = thin aluminum or fiberglass outer panels
+                    These are NOT for lifting. Do not touch.
+
+   FORK POCKETS   = reinforced steel guide sleeves built into
+                    the internal frame. These are your entry points.
+
+   If you can't see the pockets clearly — STOP and look harder.
+   Do not guess. Do not feel your way in while moving.
+
+STEP 2 — VERTICAL RIB SYMMETRY (Finding slots in the dark)
+------------------------------------------------------------
+Inside a dark truck, floor-level slots are blocked by your mast.
+
+How to find them:
+   1. Look at the TOP of the cart — not the bottom
+   2. Find the top structural columns, welds, or frame handles
+   3. Align your mast with the TOP center of the cart
+   4. The floor slots are directly below that center point
+   5. If the top looks centered, the forks are centered below
+
+STEP 3 — THE LEVEL-FORK SHADOW TRICK
+--------------------------------------
+How to confirm your forks are level before entering a slot:
+
+   1. Turn on your headlights
+   2. Look at the shadow your forks cast on the face of the cart
+   3. Both shadows should be EQUAL WIDTH and PARALLEL
+   4. If one shadow is thicker — your forks are tilted
+   5. Adjust tilt until both shadows are even
+   6. Now enter the slot — you will not bind the steel guides
+
+STEP 4 — NEVER DO A ONE-SIDED LIFT ON TOP-HEAVY LOADS
+-------------------------------------------------------
+   - Top-heavy carts (motors or heavy gear at the top) will TIP
+     the instant you try to lift with only one fork engaged
+   - If only one pocket is accessible — STOP
+   - Get a supervisor. Re-position the cart. Find another way.
+   - One-sided lifts on top-heavy loads are a hard refusal.
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+MODULE 3: GROUND CREW CHOREOGRAPHY
+=====================================
+
+WHY THIS MATTERS
+----------------
+The forklift is the center of a fast-moving human assembly line.
+The operator controls the pace of the entire operation.
+One wrong move crushes someone or destroys gear.
+
+STEP 1 — THE CLEAR-AND-RELEASE PAUSE (Unloading from a truck)
+--------------------------------------------------------------
+The danger: Stagehands rush in to grab gear the moment they
+see it coming. They will reach in while you are still moving.
+
+The rule — before ANYONE touches the load:
+   1. Bring the machine to a COMPLETE STOP
+   2. Shift to NEUTRAL
+   3. Lower the load until casters are fully on the dock floor
+   4. Wait for the load to stop moving
+   5. Confirm all hands are clear of your chassis
+   6. Only THEN say "All yours" and release the load
+
+Do not rush this pause. It takes 5 seconds and prevents crushes.
+
+STEP 2 — THE 3-FOOT REAR-SWING HALO ZONE
+------------------------------------------
+Remember: Counterbalance forklifts steer from the REAR.
+When you turn the wheel, the BACK of the machine swings out —
+sometimes 3-4 feet — in the opposite direction of your turn.
+
+Before ANY sharp turn:
+   1. One short horn tap (half a second)
+   2. Make eye contact with anyone nearby
+   3. Confirm the 3-foot zone behind and beside you is clear
+   4. THEN begin your turn
+   5. If anyone steps into that zone mid-turn — STOP immediately
+
+STEP 3 — PUSHER'S BLINDNESS YIELD RULE
+----------------------------------------
+When 4 stagehands push an 8-foot tall cart, the crew in the
+back CANNOT see anything ahead of them. They have massive
+rolling momentum and zero forward visibility.
+
+The rule is simple:
+   - The forklift ALWAYS yields to active pushing crews
+   - You can see them. They cannot see you.
+   - Stop, wait for them to clear, then proceed.
+   - Never assume they will stop or swerve for you.
+
+STEP 4 — THE TWO-TONE HORN PROTOCOL
+-------------------------------------
+Too much honking = crews stop listening. Use the horn precisely:
+
+   SHORT TAP (half second)
+   = "Heads up, I'm changing direction or moving nearby"
+   = Courtesy only. Not urgent.
+
+   LONG BLAST (continuous)
+   = Immediate life-safety danger
+   = Everyone stops, looks, gets clear
+   = Use ONLY for real emergencies
+
+Never honk constantly. It trains people to ignore the horn.
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+MODULE 4: HEAVY PHYSICS & VENUE DYNAMICS
+==========================================
+
+WHY THIS MATTERS
+----------------
+Concert gear doesn't behave like warehouse pallets. Wind, flex,
+cable bridges, and temporary floors create hazards that most
+operators have never trained for.
+
+STEP 1 — THE SAIL EFFECT (Wind and LED walls outdoors)
+-------------------------------------------------------
+A 20-foot LED wall or fabric sail creates massive wind drag.
+Even a 15 mph breeze can try to tip your machine over.
+
+Before any outdoor high lift:
+   1. Check the wind speed
+   2. If wind is at or above 15 mph — STOP. Do not lift.
+   3. If wind is below 15 mph, apply derating:
+      Assume your safe capacity is 20-30% LOWER than the chart
+   4. Deploy ALL outriggers / stabilizers before extending boom
+   5. Keep your movements slow and smooth — no quick motions
+
+STEP 2 — TRUSS BUNDLE DEFLECTION (Long aluminum truss)
+-------------------------------------------------------
+40-foot truss bundles are flexible. Lift them wrong and they
+bow, flex, and can slide off your forks or warp permanently.
+
+How to lift long truss correctly:
+   1. Spread your forks to MAXIMUM width
+   2. Position forks near the OUTER THIRDS of the bundle
+      (not in the center)
+   3. Lift slowly and smoothly — no jerking
+   4. Drive slowly — bouncing causes the bundle to flex and slide
+   5. Never center-lift a long truss bundle
+
+STEP 3 — THE 45-DEGREE CABLE BRIDGE CROSSING
+----------------------------------------------
+Stadium floors have thick yellow cable ramps protecting
+high-voltage power lines. Crossing them straight on with
+a heavy machine can crush the cables underneath.
+
+How to cross cable ramps:
+   1. Approach the cable ramp at a 45-DEGREE ANGLE
+   2. This means one tire crosses at a time — not both at once
+   3. Slow down to a crawl
+   4. Let the machine roll over the ramp gradually
+   5. Never cross straight-on at speed
+
+STEP 4 — STAGE DECK POINT-LOADING
+------------------------------------
+Temporary stage decks have weight limits per square foot.
+A 12,000 lb forklift concentrates all that weight on 4 small
+tire contact patches.
+
+Before driving onto any temporary stage deck:
+   1. Ask the production manager for the deck's load rating
+      (example: 150 lbs per square foot)
+   2. Do NOT drive on if you're unsure of the rating
+   3. Drive slowly — no hard stops or sharp turns
+   4. Spread the load by keeping the machine moving
+      (stationary = concentrated point load)
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+MODULE 5: NIGHT LOAD-IN CHAOS
+================================
+
+WHY THIS MATTERS
+----------------
+At 2:00 AM after a long shift, your eyes and brain are not
+working at full capacity. The venue adds strobes, haze, and
+darkness. Routine moves become dangerous.
+
+STEP 1 — FLASH BLINDNESS PROTOCOL
+-----------------------------------
+Lighting crews test strobes without warning. When a bright
+flash hits you, your night vision is wiped out for seconds.
+
+What to do:
+   1. STOP the machine IMMEDIATELY — velocity drops to zero
+   2. Do not try to keep moving slowly — you are blind
+   3. Do not lean out the cage to see better
+   4. Do not trust muscle memory to finish the move
+   5. Hold position. Wait for vision to return.
+   6. Only then continue.
+
+Zero velocity when vision is compromised. Every time.
+
+STEP 2 — TIRE SCRUBBING ON SENSITIVE FLOORS
+---------------------------------------------
+On NBA hardwood courts or event venue floors covered with
+temporary plywood, a spinning pivot turn will:
+   - Burn through the plywood
+   - Gouge and scar the hardwood underneath
+   - Cost the venue thousands of dollars — billed to the tour
+
+How to turn without scrubbing:
+   1. Keep the machine ROLLING slightly during all turns
+   2. Never execute a full stationary pivot (spinning in place)
+   3. Use slow, arcing turns — like a car making a U-turn
+   4. If space is too tight for an arc — back and fill slowly
+      in small increments rather than spinning
+
+STEP 3 — ICE RINK INSULATION TRAP
+------------------------------------
+Many arenas have temporary insulated decking over ice rinks.
+Parking a heavy machine in one spot causes the panels to:
+   - Compress under the concentrated weight
+   - "Cold-sweat" where the insulation meets the ice below
+   - Create a subtle sag that tilts your machine
+
+The rule:
+   1. Never park heavy loads long-term over arena ice decking
+   2. Keep the machine or load moving, or move it to a solid
+      perimeter edge where structural support exists
+   3. If you must hold position, keep the load elevated —
+      not sitting on the deck
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+MODULE 6: RIGGING COORDINATION & UP-LOOK PROTOCOL
+===================================================
+
+WHY THIS MATTERS
+----------------
+High-riggers work 40-80 feet above the floor. Tools, shackles,
+and hardware can fall. A 2 lb shackle falling 60 feet hits
+with the same force as a 120 lb weight dropped 1 foot.
+The airspace above you is a deadly work zone.
+
+STEP 1 — THE UP-LOOK PROTOCOL (Required at every rigging zone)
+---------------------------------------------------------------
+Before entering ANY area where overhead rigging is active:
+
+   1. STOP the machine at the edge of the zone
+   2. Look UP — scan the entire overhead area slowly
+   3. Look for dangling hardware, loose motors, active riggers
+   4. Confirm the drop zone is clear
+   5. Radio or verbally confirm with the rigging lead that
+      it is safe to proceed
+   6. Only after confirmation — enter the zone
+
+This takes 15 seconds. It is mandatory. Every single time.
+
+STEP 2 — MANAGING GROUND AND OVERHEAD HAZARDS SIMULTANEOUSLY
+--------------------------------------------------------------
+Sometimes ground crew is pushing a load in your path AT THE
+SAME TIME that riggers are working overhead.
+
+How to handle both at once:
+   1. Call "STOP" — halt all ground movement first
+   2. Wait for the "STOP" echo from ground crew
+   3. Confirm the 3-foot halo zone is clear around your machine
+   4. Now do your Up-Look — scan above you
+   5. Only after BOTH ground and overhead are confirmed clear
+      do you proceed
+   6. Never manage only one hazard at a time
+
+STEP 3 — SLING LIFTS ON BARE FORKS
+-------------------------------------
+Sometimes slings or chains are choked around the bare forks
+to lift audio arrays or structures.
+
+What changes compared to a normal pallet lift:
+   - The load swings freely — it is not rigid
+   - Any movement causes a pendulum effect
+   - This shifts your machine's center of gravity constantly
+   - Slow down ALL movements by at least 50%
+   - No sudden starts, stops, or direction changes
+   - Have a qualified rigger control the load with a tag line
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+MODULE 7: FATIGUE, PRESSURE & STOP-WORK AUTHORITY
+===================================================
+
+WHY THIS MATTERS
+----------------
+The biggest risk on a 2:00 AM load-out is not the machine.
+It is the exhausted operator who pushes past their limit.
+Fatigue causes delayed reactions, tunnel vision, and microsleep.
+These kill people and end tours.
+
+STEP 1 — KNOW YOUR FATIGUE SIGNS
+----------------------------------
+Watch for these in yourself:
+
+   - Eyes that feel heavy or keep losing focus
+   - Moments where you "wake up" and realize you zoned out
+   - Slowed reaction time — things feel like slow motion
+   - Forgetting your last few moves
+   - Irritability or difficulty making simple decisions
+
+If ANY of these happen during an operation — stop immediately.
+
+STEP 2 — HOW TO INVOKE STOP-WORK AUTHORITY
+--------------------------------------------
+Stop-Work Authority means ANY person on the production crew
+has the right — and the obligation — to halt an unsafe operation.
+As the operator, you have full authority. Use it.
+
+When you feel unsafe or recognize a hazard:
+
+   1. Say "STOP" — loudly and clearly
+   2. Freeze the machine — all hydraulics and motion halt
+   3. State your reason calmly:
+      "I am fatigued and need relief before continuing."
+      "This load is compromised and is not safe to travel."
+      "The rigging zone is not clear."
+   4. Do not proceed until the issue is resolved
+
+STEP 3 — HOW TO HANDLE PRODUCTION PRESSURE
+--------------------------------------------
+Scenario: The Tour Manager is screaming that the truck leaves
+in 20 minutes and you need to push through.
+
+What NOT to do:
+   - Do not fold and say "okay, I'll just be careful"
+   - Do not argue, get emotional, or raise your voice
+   - Do not threaten to quit or escalate personally
+
+What TO do — use professional, factual language:
+   - "The load is structurally compromised. It cannot travel."
+   - "I am past safe operating limits. I need relief."
+   - "The rigging zone is not cleared. We cannot proceed."
+
+These phrases are objective and unarguable. They remove emotion.
+A professional production manager will respect them.
+An accident cancels the tour. A 15-minute delay does not.
+
+STEP 4 — THE HERO OPERATOR TRAP
+---------------------------------
+"Hero Operator" = someone who pushes through exhaustion
+and pressure to "save the show."
+
+Why this backfires:
+   - Reaction time at 14+ hours is severely degraded
+   - Tunnel vision causes missed hazards in the periphery
+   - Microsleep can cause a dropped load or crush injury
+   - One accident does not just hurt one person —
+     it shuts down the whole tour, potentially permanently
+
+Being the operator who calls STOP when it counts IS saving
+the show. Every time.
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+CAPSTONE SCENARIO: THE 2:00 AM ARENA LOAD-OUT
+===============================================
+
+SITUATION
+----------
+Time: 2:00 AM
+Shift: 14 hours in
+Load: 10,000 lb LED wall section (massive sail surface)
+Wind: 17 mph gusting
+Rigging: High-riggers active 60 ft above center stage
+Visibility: Low — haze and dim house lights
+Pressure: Tour Manager needs the truck to roll in 45 minutes
+
+Walk through each step correctly:
+
+STEP 1 — APPROACHING THE RIGGING ZONE
+--------------------------------------
+   WRONG: Drive in and start positioning under the rigging
+   RIGHT: Stop at the zone edge. Perform Up-Look. Radio the
+          rigging lead. Wait for verbal "clear" before entering.
+
+STEP 2 — WIND HITS 17 MPH WHILE RAISING THE BOOM
+--------------------------------------------------
+   WRONG: Continue raising because you're "almost there"
+   RIGHT: STOP. Call "STOP" on radio. 17 mph exceeds the 15 mph
+          threshold. The LED wall will act as a sail. Hold
+          position until wind drops or conditions change.
+
+STEP 3 — GROUND CREW RUSHES IN BEFORE YOU SIGNAL
+--------------------------------------------------
+   WRONG: Lower the load to them while they're reaching in
+   RIGHT: Call "STOP." Wait for the echo. Confirm the 3-foot
+          halo is clear. Perform a quick Up-Look. Only then
+          lower the load for the hand-off.
+
+STEP 4 — YOU FEEL A MICROSLEEP COMING ON
+-----------------------------------------
+   WRONG: Push through — it's just one more lift
+   RIGHT: Stop the machine. Radio: "Operator calling STOP —
+          requesting relief." Step down from the machine.
+
+PASSING THIS CAPSTONE REQUIRES ALL FOUR CORRECT.
+One shortcut. One skipped step. One "just this once."
+That is how careers end and people get hurt.
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+QUICK-REFERENCE RULE CARD
+===========================
+(Post this somewhere visible at your workstation)
+
+DAILY REMINDERS
+---------------
+   Always approach from the LEFT
+   Always buckle the seat belt
+   Always travel with forks LOW (4-8 inches)
+   Always perform the Up-Look before entering rigging zones
+   Always use the Clear-and-Release Pause before hands touch load
+   Always yield to pushing crews (Pusher's Blindness Rule)
+   Always cross cable ramps at 45 degrees
+   Always call STOP the instant something feels wrong
+
+COMMANDS
+--------
+   "STOP"  = universal command, all motion halts instantly
+   SHORT TAP (horn) = courtesy notice, changing direction
+   LONG BLAST (horn) = life-safety emergency only
+
+WIND RULE
+----------
+   Wind at or above 15 mph = NO HIGH LIFTS
+   Especially with flat surfaces (LED walls, fabric sails)
+
+FATIGUE RULE
+-------------
+   14+ hours = request relief before any complex lift
+   Microsleep = immediate operational stop, no exceptions
+
+STOP-WORK PHRASES
+------------------
+   "The load is compromised. It cannot travel."
+   "The rigging zone is not clear."
+   "I am past safe operating limits. I need relief."
+
+----------------------------------------------------------------
+
+END OF MANUAL
+================================================================
+   TOUR-READY OPERATOR TRAINING MANUAL  |  Version 1.0
+   Concert & Festival Production
+   Supplement to OSHA certification — not a replacement.
+================================================================
