@@ -497,8 +497,9 @@ export default function Landing() {
           {BUYERS.map((b) => (
             <div
               key={b.title}
-              className="rounded-[var(--radius-card)] border border-[var(--color-border)]/40 bg-white/50 p-6"
+              className="rounded-[var(--radius-card)] border border-[var(--color-canvas-ink)]/12 bg-white p-6 shadow-[0_8px_24px_-16px_rgba(28,20,16,0.35)]"
             >
+              <span aria-hidden className="mb-3 block h-1 w-8 rounded-sm bg-[var(--color-accent)]" />
               <h3 className="text-base font-bold tracking-tight text-[var(--color-canvas-ink)]">
                 {b.title}
               </h3>

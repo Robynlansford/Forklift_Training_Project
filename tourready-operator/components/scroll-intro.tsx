@@ -156,6 +156,7 @@ export function ScrollIntro() {
   function hideFilm() {
     const root = ref.current;
     if (!root) return;
+    root.style.display = "none";
     root.style.visibility = "hidden";
     root.style.pointerEvents = "none";
     root.style.height = "0";
@@ -174,7 +175,15 @@ export function ScrollIntro() {
   }
 
   const tryMount = () => {
-    if (mounted.current || !ref.current || !window.mountScrollWorld || !resolvedRef.current) return;
+    if (
+      cancelledRef.current ||
+      mounted.current ||
+      !ref.current ||
+      !window.mountScrollWorld ||
+      !resolvedRef.current
+    ) {
+      return;
+    }
     mounted.current = true;
     const blobs = resolvedRef.current;
     window.mountScrollWorld(ref.current, {
@@ -275,7 +284,7 @@ export function ScrollIntro() {
   // over the rest of the landing page after the film's scroll range is spent.
   // Hide them once past it, and restore on scroll back up.
   useEffect(() => {
-    if (phase !== "ready") return;
+    if (phase !== "ready" || skipped) return;
     const onScroll = () => {
       const root = ref.current;
       if (!root) return;
@@ -292,7 +301,7 @@ export function ScrollIntro() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [phase]);
+  }, [phase, skipped]);
 
   const pct = Math.min(100, Math.round((loadedBytes / TOTAL_BYTES) * 100));
 
@@ -356,20 +365,22 @@ export function ScrollIntro() {
         </button>
       )}
 
-      <div
-        id="load-out"
-        ref={ref}
-        className="sw-root"
-        style={
-          {
-            isolation: "isolate",
-            "--sw-bg": "#0b1120",
-            "--sw-ink": "#f8fafc",
-            "--sw-ink-soft": "#94a3b8",
-            "--sw-accent": "#f97316",
-          } as React.CSSProperties
-        }
-      />
+      {!skipped && (
+        <div
+          id="load-out"
+          ref={ref}
+          className="sw-root"
+          style={
+            {
+              isolation: "isolate",
+              "--sw-bg": "#0b1120",
+              "--sw-ink": "#f8fafc",
+              "--sw-ink-soft": "#94a3b8",
+              "--sw-accent": "#f97316",
+            } as React.CSSProperties
+          }
+        />
+      )}
     </>
   );
 }
