@@ -1,54 +1,108 @@
-Here's the recommended README + folder structure for business deployment:
+# TourReady Operator
 
-# Tour-Ready Telehandler Safety Training System
-**Specialized Training for Concert & Festival Production**
+**Concert and festival telehandler / forklift training for live-event production businesses.**
 
-This offline training program is designed specifically for forklift and telehandler operators working on major tours and festivals. It focuses on the real-world hazards and high-pressure environments unique to live event production.
+TourReady Operator is a Boise AI client product: a training platform that production companies, labor companies, venues, and festival operators can put in front of lift operators before a load-in. It teaches the hazards warehouse courses skip — wind and sail effect, active rigging zones, festival mud, night chaos, fatigue, and production pressure — and drills Stop-Work Authority until it is automatic.
 
-## How to Use
+This is a **training supplement**. It does not replace OSHA certification or supervised hands-on evaluation. The employer certifies an operator after formal instruction, practical training, and workplace evaluation (29 CFR 1910.178(l)).
 
-1. Extract the folder to any computer (Windows recommended).
-2. Double-click `app.py` or run `python app.py` in a terminal.
-3. Select modules from the main menu to begin training.
-4. Complete the Capstone scenario for final evaluation.
+---
 
-## Key Features
-- Fully offline — works in arenas, festival fields, or remote sites with no internet.
-- Interactive scenarios based on real touring conditions (night load-ins, rigging coordination, wind, fatigue, etc.).
-- Integrated safety engine that evaluates decisions and provides immediate feedback.
-- Designed to supplement (not replace) official OSHA certification and hands-on training.
+## Who a business buyer is
 
-## System Requirements
-- Python 3.8 or higher
-- All files must remain in the same folder structure
-- Recommended: Windows computer with basic Python installation
+Not a retail shop. The buyer is an operations or safety lead at a **business that puts powered industrial trucks on a show site**:
 
-## Training Modules Included
-- Module 1: Truck Pack & Fork Pocket Logistics
-- Module 2: Fork Slot Anatomy & Precision Alignment
-- Module 3: Ground Crew Choreography & Assembly-Line Safety
-- Module 4: Live-Event Heavy Physics & Venue Dynamics
-- Module 5: Night Load-In Chaos & Sensory Overload
-- Module 6: Rigging Coordination & Up-Look Protocol
-- Module 7: Fatigue, Pressure, & Stop-Work Authority
-- Capstone: 2:00 AM Arena Load-Out (Final Evaluation)
+- **Touring production companies** that staff telehandler and forklift operators for arena and stadium load-ins
+- **Festival and outdoor-event producers** working soft ground, wind, and temporary decks
+- **Labor / crew companies** that supply lift operators to tours and need a consistent, concert-specific briefing
+- **Venues and arenas** that run their own house crews through show-site rules before a tour arrives
+- **Safety trainers** who already teach OSHA PIT material and need a live-event layer on top
 
-**Important Note:** This program emphasizes practical decision-making under real production pressure. Operators should still complete required OSHA certification and supervised hands-on training.
+The pitch is simple: warehouse forklift courses do not cover LED-wall sail effect, the Up-Look Protocol, or a 2:00 AM load-out. This platform does.
 
-Stay safe and professional out there.
+---
 
-Concert_Telehandler_Safety_Training/
-├── app.py
-├── telehandler_engine.py
-├── setup.bat                    ← Double-click this to run
-├── README.md
-├── progress.json                ← (will be auto-created)
-├── Module_0_Basic_Telehandler_Forklift_Controls.md
-├── Module_1_Fork_Pocket_Logistics.md
-├── Module_2_Fork_Slot_Anatomy.md
-├── Module_3_Ground_Crew_Choreography.md
-├── Module_4_Heavy_Physics_Venue_Dynamics.md
-├── Module_5_Night_Chaos.md
-├── Module_6_Rigging_Coordination.md
-├── Module_7_Fatigue_Pressure.md
-└── capstone_scenario.md
+## What you can demo
+
+The primary product is the **Next.js web app** in `tourready-operator/`:
+
+| Area | Route | What it does |
+|------|--------|--------------|
+| Landing | `/` | Scroll film + hazards + how-it-works |
+| Training Hub | `/dashboard` | Module grid, progress, export/import |
+| Module + trainer | `/modules/[slug]` | Theory briefing + free-text scenarios |
+| Safety Engine | `/simulator` | Live derating simulator (wind, ground, fatigue, reach) |
+| Knowledge Base | `/resources` | Searchable named-technique glossary + printable rule card |
+| Certification | `/certificate` | Locked until every module is passed; PNG / print credential |
+
+Progress lives in the browser (`localStorage`). Scenario grading and the safety engine run **offline** with no API key. An Anthropic key is optional and only adds a second-pass AI voice to grading and the tutor.
+
+Curriculum source of truth: `tourready-operator/lib/curriculum.ts` (15 modules including the capstone, 139 field scenarios, 47 named techniques).
+
+---
+
+## How to run (web app)
+
+**Requirements:** Node.js 18.18+ (Node 20 LTS recommended), npm 9+.
+
+```bash
+cd tourready-operator
+npm install
+npm run dev
+```
+
+Open **http://localhost:3000**.
+
+Production:
+
+```bash
+cd tourready-operator
+npm run build
+npm run start
+```
+
+On Windows, `go-live.bat` builds, starts the server on port 3000, and opens a Cloudflare quick tunnel. `setup.bat` launches the older Python CLI (below), not the web app.
+
+### Optional AI layer
+
+The trainer is complete without a key. To enable instructor-style AI feedback and a conversational tutor:
+
+1. Copy `tourready-operator/.env.example` to `tourready-operator/.env.local`
+2. Set `ANTHROPIC_API_KEY` (and optionally `ANTHROPIC_MODEL`)
+3. Restart `npm run dev`
+
+Do not commit `.env.local`. The key is read only in Next.js route handlers (`/api/grade`, `/api/tutor`) and is never sent to the browser.
+
+---
+
+## Optional: Python CLI trainer
+
+`app.py` + `telehandler_engine.py` is a small offline CLI for a subset of modules. It is **not** the demo product.
+
+```bash
+python app.py
+```
+
+Requires Python 3.8+. Module markdown in this folder is the source material the web curriculum was built from.
+
+---
+
+## Repository map
+
+```
+tourready-operator/     Next.js 15 app — demo this
+app.py                  Optional CLI trainer
+telehandler_engine.py   Python safety engine (ported to lib/safety-engine.ts)
+OPERATOR_GUIDE.md       Operator walkthrough (ports and paths match this README)
+```
+
+---
+
+## Secrets
+
+No API keys or credentials belong in this repo. Environment variables are documented **by name only**:
+
+- `ANTHROPIC_API_KEY` — optional; unlocks AI grading + tutor
+- `ANTHROPIC_MODEL` — optional; model override for those routes
+
+`.env`, `.env*.local`, `*.pem`, and `*.key` are gitignored.

@@ -76,7 +76,7 @@ export function AiTutor() {
         whileTap={{ scale: 0.95 }}
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Close AI Safety Tutor" : "Open AI Safety Tutor"}
-        className="no-print fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--color-accent)] text-black shadow-[0_8px_30px_-6px_rgba(249,115,22,0.6)]"
+        className="no-print fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-[max(1.25rem,env(safe-area-inset-right))] z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--color-accent)] text-black shadow-[0_8px_30px_-6px_rgba(249,115,22,0.6)]"
       >
         <AnimatePresence mode="wait">
           {open ? (
@@ -98,7 +98,7 @@ export function AiTutor() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.96 }}
             transition={{ type: "spring", stiffness: 350, damping: 30 }}
-            className="no-print fixed bottom-24 right-6 z-50 flex h-[min(560px,75vh)] w-[min(400px,calc(100vw-3rem))] flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.7)]"
+            className="no-print fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-50 flex h-[min(560px,70dvh)] w-[min(400px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.7)]"
             role="dialog"
             aria-label="AI Safety Tutor"
           >
