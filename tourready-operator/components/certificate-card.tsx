@@ -74,9 +74,20 @@ export function CertificateCard({
             <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
               This certifies that
             </p>
-            <p className="type-display mt-3 text-5xl text-[var(--color-text)] sm:text-6xl">
-              {name || "Operator Name"}
+            <p
+              className={`type-display mt-3 text-5xl sm:text-6xl ${
+                name.trim()
+                  ? "text-[var(--color-text)]"
+                  : "text-[var(--color-muted)]"
+              }`}
+            >
+              {name.trim() || "Name not entered"}
             </p>
+            {!name.trim() && (
+              <p className="mt-2 text-sm text-[var(--color-muted)]">
+                Enter the operator name in the field above before you print or download.
+              </p>
+            )}
             <div className="mt-4 h-px w-full bg-gradient-to-r from-[var(--color-accent)]/60 via-[var(--color-border)] to-transparent" />
             <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-[var(--color-text)]/85">
               has completed the full TourReady Operator curriculum and is recognized as a{" "}

@@ -30,11 +30,11 @@ export function Logo({ className }: { className?: string }) {
         </svg>
         <span className="beacon-dot absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-[var(--color-accent)] shadow-[0_0_8px_var(--color-accent)]" />
       </span>
-      <span className="flex flex-col leading-none">
+      <span className="hidden min-[360px]:flex flex-col leading-none">
         <span className="type-display text-[17px] tracking-[0.04em] text-[var(--color-text)]">
           TourReady<span className="text-[var(--color-accent)]"> Operator</span>
         </span>
-        <span className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-muted)]">
+        <span className="mt-0.5 hidden text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-muted)] sm:block">
           Concert &amp; Festival Lift Cert
         </span>
       </span>

@@ -9,7 +9,7 @@ export function SiteFooter() {
     <footer className="no-print mt-24 border-t border-[var(--color-border)]/60 bg-[var(--color-page-bg)]">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-          <p className="max-w-md text-xs leading-relaxed text-[var(--color-muted)]">
+          <p className="max-w-md text-xs leading-relaxed text-[var(--color-canvas-muted)]">
             <span className="font-semibold text-[var(--color-canvas-ink)]">
               TourReady Operator
             </span>{" "}
@@ -21,7 +21,7 @@ export function SiteFooter() {
             employer&apos;s hands-on training and evaluation before operating any
             lift equipment.
           </p>
-          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-[var(--color-muted)]">
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-[var(--color-canvas-muted)]">
             <Link href="/dashboard" className="hover:text-[var(--color-canvas-ink)]">
               Training Hub
             </Link>
@@ -36,7 +36,7 @@ export function SiteFooter() {
             </Link>
           </div>
         </div>
-        <p className="mt-8 text-[11px] uppercase tracking-[0.2em] text-[var(--color-muted)]/70">
+        <p className="mt-8 text-[11px] uppercase tracking-[0.2em] text-[var(--color-canvas-muted)]">
           Concert &amp; Festival Production · Telehandler &amp; Forklift · v1.0
         </p>
       </div>

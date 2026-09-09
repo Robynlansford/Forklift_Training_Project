@@ -21,6 +21,8 @@ export interface ProgressState {
   scores: Record<string, ModuleScore>;
   /** Stable per-device certification id (assigned on first certification). */
   certificateId: string | null;
+  /** ISO timestamp when the credential first issued. Survives later views. */
+  certificateIssuedAt: string | null;
   setOperatorName: (name: string) => void;
   recordModule: (slug: string, score: ModuleScore) => void;
   resetModule: (slug: string) => void;
@@ -45,6 +47,7 @@ export const useProgress = create<ProgressState>()(
       operatorName: "",
       scores: {},
       certificateId: null,
+      certificateIssuedAt: null,
       _hasHydrated: false,
       setHasHydrated: (v) => set({ _hasHydrated: v }),
       setOperatorName: (name) => set({ operatorName: name }),
@@ -57,7 +60,10 @@ export const useProgress = create<ProgressState>()(
           return sc && sc.pass / sc.total >= moduleThreshold(m);
         });
         if (allPassed && !certificateId) {
-          set({ certificateId: makeCertId() });
+          set({
+            certificateId: makeCertId(),
+            certificateIssuedAt: new Date().toISOString(),
+          });
         }
       },
       resetModule: (slug) =>
@@ -66,12 +72,13 @@ export const useProgress = create<ProgressState>()(
           delete next[slug];
           return { scores: next };
         }),
-      resetAll: () => set({ scores: {}, certificateId: null }),
+      resetAll: () => set({ scores: {}, certificateId: null, certificateIssuedAt: null }),
       importState: (data) =>
         set((s) => ({
           operatorName: data.operatorName ?? s.operatorName,
           scores: data.scores ?? s.scores,
           certificateId: data.certificateId ?? s.certificateId,
+          certificateIssuedAt: data.certificateIssuedAt ?? s.certificateIssuedAt,
         })),
     }),
     {

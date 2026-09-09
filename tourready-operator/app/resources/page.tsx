@@ -154,8 +154,34 @@ export default function ResourcesPage() {
           ))}
         </div>
         {filtered.length === 0 && (
-          <div className="mt-12 text-center text-sm text-[var(--color-muted)]">
-            No techniques match &ldquo;{query}&rdquo;.
+          <div className="mt-12 rounded-[var(--radius-card)] border border-dashed border-[var(--color-border)] bg-[var(--color-surface)]/40 px-6 py-12 text-center">
+            <p className="text-sm font-medium text-[var(--color-text)]">
+              No techniques match
+              {query.trim() ? (
+                <>
+                  {" "}
+                  &ldquo;{query.trim()}&rdquo;
+                </>
+              ) : (
+                " this filter"
+              )}
+              {category !== "All" ? ` in ${category}` : ""}.
+            </p>
+            <p className="mt-2 text-sm text-[var(--color-muted)]">
+              Try a named technique (Up-Look, Sail Effect, STOP) or reset the filters.
+            </p>
+            <div className="mt-5 flex flex-wrap justify-center gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  setQuery("");
+                  setCategory("All");
+                }}
+              >
+                Show all techniques
+              </Button>
+            </div>
           </div>
         )}
       </section>

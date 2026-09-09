@@ -1,10 +1,14 @@
 # TourReady Operator
 
-**The AI-powered certification platform for Concert &amp; Festival Telehandler and Forklift operators.**
+**Concert and festival telehandler / forklift training for live-event production businesses.**
 
-Master the 2:00 AM load-out and build unbreakable Stop-Work Authority. TourReady Operator turns a field-tested live-event lift curriculum into a deliberate-practice training system: faithful theory, free-text interactive scenarios with instructor-grade feedback, a live safety-derating engine, an AI tutor, and a verifiable certificate.
+TourReady Operator turns a field-tested live-event lift curriculum into a deliberate-practice system: theory, free-text scenarios with instructor-grade feedback, a live safety-derating engine, an optional AI tutor, and a credential that issues when every module is passed.
 
-Built for the floor you actually work — wind and the Sail Effect, active rigging zones, festival mud, fatigue, and production pressure. Not a generic warehouse forklift course.
+Built for the floor operators actually work — wind and the Sail Effect, active rigging zones, festival mud, fatigue, and production pressure. Not a generic warehouse forklift course.
+
+**Business buyer:** operations or safety leads at touring production companies, festival producers, labor / crew companies, venues, and trainers who already teach OSHA PIT material and need a show-site layer. This is a training supplement — the employer still certifies after hands-on evaluation.
+
+See the [root README](../README.md) for buyer framing and the full repo map.
 
 ---
 
@@ -40,11 +44,12 @@ The trainer grades every scenario instantly with a **deterministic, offline keyw
    ```bash
    cp .env.example .env.local
    ```
-2. Add your key (from <https://console.anthropic.com/>):
+2. Set these variables by name (values stay in `.env.local`, never in git):
    ```
-   ANTHROPIC_API_KEY=sk-ant-...
-   # ANTHROPIC_MODEL=claude-sonnet-4-6   # optional override
+   ANTHROPIC_API_KEY=
+   # ANTHROPIC_MODEL=   # optional override; default is documented in .env.example
    ```
+   Get a key from the Anthropic console, then paste it as the value of `ANTHROPIC_API_KEY`.
 3. Restart `npm run dev`.
 
 The key is **server-side only** — it is read in Next.js route handlers (`app/api/grade`, `app/api/tutor`) and never shipped to the browser. With no key, those routes return `503` and the UI gracefully keeps the offline experience.

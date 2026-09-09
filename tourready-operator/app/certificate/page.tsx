@@ -14,10 +14,16 @@ import { StatusPill } from "@/components/status-pill";
 
 export default function CertificatePage() {
   const hydrated = useHydrated();
-  const { operatorName, scores, certificateId, setOperatorName } = useProgress();
+  const { operatorName, scores, certificateId, certificateIssuedAt, setOperatorName } =
+    useProgress();
   const overall = overallProgress(scores);
 
   const totalCorrect = Object.values(scores).reduce((a, b) => a + b.pass, 0);
+  const lastCompletedAt = Object.values(scores)
+    .map((s) => s.completedAt)
+    .filter(Boolean)
+    .sort()
+    .at(-1);
 
   // Weak areas: techniques the operator missed, grouped by module.
   const weakAreas = MODULES.flatMap((m) => {
@@ -28,14 +34,17 @@ export default function CertificatePage() {
       .map((sc) => ({ module: m.title, slug: m.slug, technique: sc.technique }));
   });
 
-  const issueDate =
-    hydrated && certificateId
-      ? new Date().toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      : "";
+  const issuedSource = certificateIssuedAt || lastCompletedAt || "";
+  const issueDate = issuedSource
+    ? new Date(issuedSource).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
+
+  const nextIncomplete =
+    MODULES.find((m) => moduleStatus(m, scores) !== "passed") ?? MODULES[0];
 
   if (!hydrated) {
     return (
@@ -88,14 +97,23 @@ export default function CertificatePage() {
               {overall.passedModules} of {overall.totalModules} modules passed
             </h2>
             <p className="mt-1.5 text-sm leading-relaxed text-[var(--color-muted)]">
-              Your credential issues automatically the moment every module is passed. Focus your next
-              session on the weak areas below.
+              {overall.passedModules === 0
+                ? "No modules started. The credential stays locked until every module is passed. Open the Training Hub and begin with Module 0."
+                : weakAreas.length > 0
+                  ? "Your credential issues automatically the moment every module is passed. Review the missed techniques below, then continue training."
+                  : "Your credential issues automatically the moment every module is passed. Finish the remaining modules — no failed scenarios are on record."}
             </p>
-            <Link href="/dashboard" className="mt-4 inline-block">
-              <Button>
-                Back to Training Hub <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+            <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
+              <Link href={`/modules/${nextIncomplete.slug}`}>
+                <Button>
+                  {overall.passedModules === 0 ? "Start Module 0" : "Continue Training"}{" "}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="/dashboard">
+                <Button variant="secondary">Training Hub</Button>
+              </Link>
+            </div>
           </div>
         </Card>
       )}

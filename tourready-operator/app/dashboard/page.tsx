@@ -32,8 +32,15 @@ import { toast } from "@/components/ui/toast";
 
 export default function Dashboard() {
   const hydrated = useHydrated();
-  const { operatorName, scores, certificateId, setOperatorName, resetAll, importState } =
-    useProgress();
+  const {
+    operatorName,
+    scores,
+    certificateId,
+    certificateIssuedAt,
+    setOperatorName,
+    resetAll,
+    importState,
+  } = useProgress();
   const fileRef = useRef<HTMLInputElement>(null);
 
   const overall = overallProgress(scores);
@@ -48,6 +55,7 @@ export default function Dashboard() {
       operatorName: name,
       certificateId,
       certified: overall.certified,
+      certificateIssuedAt,
       savedAt: new Date().toISOString(),
       summary: {
         passedModules: overall.passedModules,
@@ -96,7 +104,11 @@ export default function Dashboard() {
     MODULES.find((m) => moduleStatus(m, scores) !== "passed") ?? MODULES[MODULES.length - 1];
 
   function exportJson() {
-    const data = JSON.stringify({ operatorName, scores, certificateId }, null, 2);
+    const data = JSON.stringify(
+      { operatorName, scores, certificateId, certificateIssuedAt },
+      null,
+      2
+    );
     const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -133,7 +145,9 @@ export default function Dashboard() {
           <p className="mt-1.5 text-[var(--color-muted)]">
             {hydrated && operatorName.trim()
               ? `Welcome back, ${operatorName.trim().split(/\s+/)[0]} — your path to a Tour-Ready Operator credential.`
-              : "Your path to a Tour-Ready Operator credential."}
+              : hydrated && overall.passedModules === 0
+                ? "No modules started yet. Begin with Module 0, or enter an operator name so feedback and records use it."
+                : "Your path to a Tour-Ready Operator credential."}
           </p>
         </div>
         <div className="flex flex-wrap gap-2 no-print">
@@ -189,6 +203,8 @@ export default function Dashboard() {
                 <Badge variant="go">
                   <Award className="h-3 w-3" /> Certified
                 </Badge>
+              ) : hydrated && overall.passedModules === 0 ? (
+                <Badge variant="neutral">Not started</Badge>
               ) : (
                 <Badge variant="accent">In progress</Badge>
               )}
@@ -197,7 +213,9 @@ export default function Dashboard() {
               {hydrated
                 ? overall.certified
                   ? "Every module passed. Your Tour-Ready Operator credential is ready to issue."
-                  : `${overall.passedModules} of ${overall.totalModules} modules passed · ${totalCorrect}/${TOTAL_SCENARIOS} scenarios correct. Keep going.`
+                  : overall.passedModules === 0
+                    ? `0 of ${overall.totalModules} modules started · ${TOTAL_SCENARIOS} field scenarios across the curriculum. Open the first module to begin.`
+                    : `${overall.passedModules} of ${overall.totalModules} modules passed · ${totalCorrect}/${TOTAL_SCENARIOS} scenarios correct. Keep going.`
                 : "Loading your progress…"}
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">

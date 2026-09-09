@@ -142,9 +142,36 @@ export function ScrollIntro() {
   const ref = useRef<HTMLDivElement>(null);
   const mounted = useRef(false);
   const engineReady = useRef(false);
+  const cancelledRef = useRef(false);
   const [loadedBytes, setLoadedBytes] = useState(0);
   const [phase, setPhase] = useState<"loading" | "revealing" | "ready">("loading");
+  const [skipped, setSkipped] = useState(false);
   const resolvedRef = useRef<Record<string, string> | null>(null);
+
+  function restoreOverflow() {
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
+  }
+
+  function hideFilm() {
+    const root = ref.current;
+    if (!root) return;
+    root.style.visibility = "hidden";
+    root.style.pointerEvents = "none";
+    root.style.height = "0";
+    root.style.overflow = "hidden";
+  }
+
+  function skipFilm() {
+    if (cancelledRef.current && skipped) return;
+    cancelledRef.current = true;
+    restoreOverflow();
+    setSkipped(true);
+    setPhase("ready");
+    hideFilm();
+    const hero = document.getElementById("hero");
+    hero?.scrollIntoView({ behavior: "auto", block: "start" });
+  }
 
   const tryMount = () => {
     if (mounted.current || !ref.current || !window.mountScrollWorld || !resolvedRef.current) return;
@@ -195,21 +222,35 @@ export function ScrollIntro() {
 
     (async () => {
       const results: Record<string, string> = {};
-      await Promise.all(
-        SECTIONS.flatMap((s) => [
-          fetchWithProgress(s.video, "video/mp4", (n) => !cancelled && setLoadedBytes((b) => b + n)).then((blob) => {
-            results[`${s.id}-video`] = URL.createObjectURL(blob);
-          }),
-          fetchWithProgress(s.poster, "image/webp", (n) => !cancelled && setLoadedBytes((b) => b + n)).then((blob) => {
-            results[`${s.id}-poster`] = URL.createObjectURL(blob);
-          }),
-        ])
-      );
-      if (cancelled) return;
+      try {
+        await Promise.all(
+          SECTIONS.flatMap((s) => [
+            fetchWithProgress(s.video, "video/mp4", (n) => !cancelled && setLoadedBytes((b) => b + n)).then((blob) => {
+              results[`${s.id}-video`] = URL.createObjectURL(blob);
+            }),
+            fetchWithProgress(s.poster, "image/webp", (n) => !cancelled && setLoadedBytes((b) => b + n)).then((blob) => {
+              results[`${s.id}-poster`] = URL.createObjectURL(blob);
+            }),
+          ])
+        );
+      } catch {
+        // Failed preload must never leave the document scroll-locked.
+        if (!cancelled && !cancelledRef.current) {
+          cancelledRef.current = true;
+          document.documentElement.style.overflow = "";
+          document.body.style.overflow = "";
+          setSkipped(true);
+          setPhase("ready");
+        }
+        return;
+      }
+      if (cancelled || cancelledRef.current) return;
       resolvedRef.current = results;
       // Hold the completed bar at 100% for one beat before revealing — an
       // instant cut from "loading" to "playing" reads as a glitch, not a gate.
-      setTimeout(() => !cancelled && setPhase("revealing"), 260);
+      setTimeout(() => {
+        if (!cancelled && !cancelledRef.current) setPhase("revealing");
+      }, 260);
     })();
 
     return () => {
@@ -268,9 +309,9 @@ export function ScrollIntro() {
         }}
       />
 
-      {phase !== "ready" && (
+      {phase !== "ready" && !skipped && (
         <div
-          className="fixed inset-0 z-[200] flex flex-col items-center justify-center gap-8 bg-[var(--color-bg)] transition-opacity duration-500"
+          className="fixed inset-0 z-[200] flex flex-col items-center justify-center gap-8 bg-[var(--color-bg)] px-4 transition-opacity duration-500"
           style={{ opacity: phase === "revealing" ? 0 : 1, pointerEvents: phase === "revealing" ? "none" : "auto" }}
           aria-hidden={phase === "revealing"}
         >
@@ -294,7 +335,25 @@ export function ScrollIntro() {
           <p className="max-w-xs text-center text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
             Every scene loads before you scroll — no half-loaded clips mid-scrub.
           </p>
+
+          <button
+            type="button"
+            onClick={skipFilm}
+            className="rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-text)] transition-colors hover:border-[var(--color-accent)]/50 hover:bg-white/5"
+          >
+            Skip film — go to training
+          </button>
         </div>
+      )}
+
+      {phase === "ready" && !skipped && (
+        <button
+          type="button"
+          onClick={skipFilm}
+          className="no-print fixed right-4 top-20 z-[60] rounded-lg border border-[var(--color-border)]/70 bg-[var(--color-bg)]/80 px-3 py-1.5 text-xs font-semibold text-[var(--color-text)] backdrop-blur hover:border-[var(--color-accent)]/50 sm:right-6"
+        >
+          Skip film
+        </button>
       )}
 
       <div
