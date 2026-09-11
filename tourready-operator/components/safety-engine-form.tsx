@@ -35,7 +35,7 @@ const DEFAULTS: Required<
     | "shiftDurationHrs"
   >
 > = {
-  loadWeightLbs: 4200,
+  loadWeightLbs: 2500,
   groundType: "CONCRETE",
   windSpeedMph: 6,
   riggingZoneClear: true,
@@ -63,7 +63,9 @@ const PRESETS: Preset[] = [
     tag: "GO",
     description: "Concrete floor, light wind, fresh crew, comms confirmed.",
     values: {
-      loadWeightLbs: 4200,
+      // 2,500 lb at 6 ft of reach sits inside the ~3,850 lb the moment model
+      // allows here. The old linear derate allowed 7,600 lb at this reach.
+      loadWeightLbs: 2500,
       groundType: "CONCRETE",
       windSpeedMph: 5,
       riggingZoneClear: true,
@@ -413,12 +415,12 @@ export function SafetyEngineForm() {
               </p>
             </div>
 
-            {result.deratedCapacityLbs > 0 && (
+            {result.estimatedCapacityLbs > 0 && (
               <div className="rounded-lg border border-[var(--color-border)]/60 bg-[var(--color-surface-2)]/40 p-3.5">
                 <div className="flex items-baseline justify-between">
-                  <span className="text-[12px] text-[var(--color-muted)]">Derated capacity</span>
+                  <span className="text-[12px] text-[var(--color-muted)]">Estimated capacity</span>
                   <span className="text-lg font-bold tabular-nums text-[var(--color-text)]">
-                    {Math.round(result.deratedCapacityLbs).toLocaleString()} lbs
+                    {Math.round(result.estimatedCapacityLbs).toLocaleString()} lbs
                   </span>
                 </div>
                 <div className="mt-1 flex items-baseline justify-between">
@@ -427,7 +429,7 @@ export function SafetyEngineForm() {
                     className="text-sm font-semibold tabular-nums"
                     style={{
                       color:
-                        v.loadWeightLbs > result.deratedCapacityLbs
+                        v.loadWeightLbs > result.estimatedCapacityLbs
                           ? "var(--color-hardstop)"
                           : "var(--color-go)",
                     }}
@@ -439,9 +441,9 @@ export function SafetyEngineForm() {
                   <div
                     className="h-full rounded-full transition-all"
                     style={{
-                      width: `${Math.min(100, (v.loadWeightLbs / result.deratedCapacityLbs) * 100)}%`,
+                      width: `${Math.min(100, (v.loadWeightLbs / result.estimatedCapacityLbs) * 100)}%`,
                       background:
-                        v.loadWeightLbs > result.deratedCapacityLbs
+                        v.loadWeightLbs > result.estimatedCapacityLbs
                           ? "var(--color-hardstop)"
                           : "var(--color-go)",
                     }}
@@ -456,33 +458,48 @@ export function SafetyEngineForm() {
                   Derating Factors
                 </p>
                 <dl className="space-y-1.5 text-[13px]">
-                  <Factor label="Base capacity" value={`${result.factors.base.toLocaleString()} lbs`} />
+                  <Factor label="Rated capacity (data plate)" value={`${result.factors.ratedCapacity.toLocaleString()} lbs`} />
                   <Factor label="Ground derate" value={`×${result.factors.groundDerate.toFixed(2)}`} />
-                  <Factor label="Fatigue derate" value={`×${result.factors.fatigueDerate.toFixed(2)}`} />
-                  <Factor label="Reach derate" value={`×${result.factors.reachDerate.toFixed(2)}`} />
+                  <Factor label="Reach derate (moment)" value={`×${result.factors.reachDerate.toFixed(2)}`} />
+                  <Factor label="Boom-angle derate" value={`×${result.factors.boomAngleDerate.toFixed(2)}`} />
                 </dl>
+                <p className="mt-2.5 text-[11px] leading-relaxed text-[var(--color-muted)]">
+                  Operator fatigue is deliberately absent from this product — being tired does not
+                  change where the machine tips. It is raised separately as a CAUTION.
+                </p>
               </div>
             )}
 
-            {result.estimatedImpactForceLbs != null && (
+            {result.fallingObject != null && (
               <div className="rounded-lg border border-[var(--color-hardstop)]/40 bg-[rgba(239,68,68,0.08)] p-3.5">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-hardstop)]">
-                  Falling-Object Impact
+                  Falling-Object Energy
                 </p>
                 <p className="mt-1 text-sm text-[var(--color-text)]/85">
-                  Est.{" "}
+                  A {result.fallingObject.weightLbs} lb object from{" "}
+                  {Math.round(result.fallingObject.dropHeightFt)} ft arrives at{" "}
                   <span className="font-bold tabular-nums">
-                    {Math.round(result.estimatedImpactForceLbs).toLocaleString()}
+                    {Math.round(result.fallingObject.velocityMph)}
                   </span>{" "}
-                  lb impact force from a 2 lb object at rig height. The airspace is a work zone.
+                  mph carrying{" "}
+                  <span className="font-bold tabular-nums">
+                    {Math.round(result.fallingObject.energyFtLb).toLocaleString()}
+                  </span>{" "}
+                  ft·lb. The airspace is a work zone.
+                </p>
+                <p className="mt-1.5 text-[11px] leading-relaxed text-[var(--color-muted)]">
+                  Reported as energy and speed, not force — impact force depends on stopping
+                  distance and cannot be derived from weight and height alone.
                 </p>
               </div>
             )}
           </div>
         </motion.div>
         <p className="mt-3 px-1 text-[11px] leading-relaxed text-[var(--color-muted)]">
-          The simulator runs the exact <code>TelehandlerSafetyEngine</code> logic used to grade lifts
-          everywhere in the platform — fully offline, no network required.
+          <strong className="text-[var(--color-text)]">Teaching model, not a load chart.</strong>{" "}
+          Capacity here is a conservative illustration of how reach, ground and boom angle eat into a
+          rating — it is not specific to any machine. The authoritative number is the placarded load
+          chart on the machine in front of you. Never lift to a number this page produced.
         </p>
       </div>
     </div>

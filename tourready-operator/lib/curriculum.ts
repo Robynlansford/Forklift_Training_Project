@@ -78,7 +78,15 @@ export interface Module {
   passThreshold?: number;
 }
 
-export const DEFAULT_PASS_THRESHOLD = 0.6;
+/**
+ * Fraction of a module's scenarios that must pass.
+ *
+ * Raised from 0.6 to 0.8 (2026-09-08, audit finding F-10). At 60% an operator
+ * could be wrong about two of every five hazard decisions — tip-over, rigging
+ * airspace, wind — and still be issued a credential. 80% is a deliberate
+ * policy choice, not a default: set it per module where the content warrants.
+ */
+export const DEFAULT_PASS_THRESHOLD = 0.8;
 
 export const MODULES: Module[] = [
   // ── MODULE 0 ───────────────────────────────────────────────────────────
@@ -92,7 +100,7 @@ export const MODULES: Module[] = [
     summary: "Inspection, mounting, controls, and the safe load cycle that every shift starts with.",
     whyItMatters:
       "Before any concert-specific hazard exists, the fundamentals have to be automatic. A skipped pre-op or a high-traveled load ends careers in a warehouse — let alone a packed arena floor at 2:00 AM.",
-    readMinutes: 8,
+    readMinutes: 12,
     sections: [
       {
         heading: "Pre-Operation Inspection",
@@ -148,8 +156,118 @@ export const MODULES: Module[] = [
           body: "On a load-in floor crowded with stagehands, a load carried high is a blind battering ram. 4–8 inches, tilted back — non-negotiable.",
         },
       },
+      {
+        heading: "If It Starts To Go Over",
+        lede: "The machine will lose. Your only job is to stay inside the cage. Read this before you ever need it — there is no time to think it through when it happens.",
+        steps: [
+          "STAY IN THE SEAT. Do not jump. This is the whole lesson.",
+          "Grip the wheel firmly — brace, do not push yourself up out of the seat.",
+          "Brace your feet against the floor or pedals.",
+          "LEAN AWAY from the direction of the fall — into the seat, toward the high side.",
+          "Ride it out. The overhead guard and the belt are engineered to hold the survival space around you.",
+        ],
+        callout: {
+          kind: "hard-rule",
+          title: "Jumping is what kills operators",
+          body: "The instinct is to leap clear. Operators who follow it land in the path of the overhead guard as it comes down, and it crushes them. A tipping forklift falls faster than a person can get out of it. The seat belt is not there for collisions — it is there to keep you from being thrown into the arc of a falling machine. This is why you buckle it for the 'short hop' too.",
+        },
+      },
+      {
+        heading: "Refueling, LP Cylinders & Battery Charging",
+        lede: "Concert fleets run propane indoors and electric where they can. Changing a bottle or putting a machine on charge is part of operating it.",
+        steps: [
+          "Shut the engine down before refueling or changing an LP cylinder. No smoking, no open flame, no pyro nearby.",
+          "LP cylinders: close the service valve and let the engine run out the line before disconnecting. Liquid propane causes instant frostbite — wear gloves and keep your face clear of the fitting.",
+          "Seat the replacement cylinder on its locating pin so the pressure-relief valve points UP. A bottle mounted upside down vents liquid instead of vapour.",
+          "Leak-check the connection by ear and nose before restarting. If you smell gas, stop — do not crank the engine.",
+          "Battery charging: ventilate the area. Charging lead-acid batteries release hydrogen, which is explosive. No smoking or sparks near a charging bank; keep the connector clean and never break a live connection under load.",
+          "Battery acid burns. Eye protection to top up cells, and know where the eyewash station is before you need it.",
+        ],
+        callout: {
+          kind: "hard-rule",
+          title: "Relief valve points up",
+          body: "The single most common LP mistake on a load-in is seating the bottle wrong in the dark. The locating pin only fits one way and the relief valve must point upward. Get it wrong and a relief event sprays liquid propane instead of venting vapour.",
+        },
+      },
+      {
+        heading: "Fuel, Pyro & Classified Locations",
+        lede: "A concert site has flammable atmospheres a warehouse never does.",
+        body: [
+          "Areas where flammable vapour, gas, or combustible dust may be present are 'classified locations', and they require a truck approved for that classification. A standard Class 4/5 internal-combustion lift is NOT approved for them.",
+          "On a show site that means: the pyro storage and loading area, the fuel bowser and generator refuelling point, and any enclosed space where solvent, fog fluid, or fuel vapour can collect.",
+          "You do not get to judge this by eye. If an area is placarded, taped, or marshalled by the pyro tech or fuel crew, the machine does not enter until the person responsible for that zone clears it — and only if the truck is rated for it.",
+        ],
+        callout: {
+          kind: "hard-rule",
+          title: "Pyro zone is not a shortcut",
+          body: "The pyro cage is often near the stage-left dock and it is always tempting as a route. An ignition source driving through a classified area is how a load-in becomes a fatality. Route around it, every time.",
+        },
+      },
     ],
     scenarios: [
+      {
+        id: "m0-s9",
+        technique: "Tip-Over Survival",
+        prompt:
+          "The machine starts to tip sideways with you in the seat. Exactly what do you do with your body, and what must you never do?",
+        passKeywords: [
+          "stay in the seat",
+          "stay seated",
+          "do not jump",
+          "never jump",
+          "dont jump",
+          "lean away",
+          "brace",
+          "grip the wheel",
+          "hold on",
+          "ride it out",
+        ],
+        failKeywords: ["jump clear", "jump out", "jump off", "get out", "leap", "bail out", "step off"],
+        concept:
+          "Stay in the seat. Grip the wheel, brace your feet, and lean AWAY from the direction of the fall. Never jump — operators who jump are caught by the overhead guard as it comes down. The belt and the cage are engineered to hold a survival space; your body outside them is not.",
+      },
+      {
+        id: "m0-s10",
+        technique: "LP Cylinder Change",
+        prompt:
+          "It's 01:00 and your propane lift is running dry inside the arena. Walk through changing the bottle safely.",
+        passKeywords: [
+          "shut the engine",
+          "engine off",
+          "close the valve",
+          "service valve",
+          "gloves",
+          "relief valve",
+          "locating pin",
+          "leak check",
+          "ventilat",
+          "no flame",
+        ],
+        failKeywords: ["engine running", "leave it running", "smoke", "upside down", "just swap it"],
+        concept:
+          "Engine off. Close the service valve and run the line dry. Gloves on — liquid propane causes instant frostbite. Seat the new bottle on its locating pin with the pressure-relief valve pointing UP, leak-check by ear and nose, then restart. If you smell gas, do not crank it.",
+      },
+      {
+        id: "m0-s11",
+        technique: "Classified Location Refusal",
+        prompt:
+          "The fastest route to the downstage dock runs straight past the taped-off pyro storage cage. Do you take it?",
+        passKeywords: [
+          "no",
+          "route around",
+          "go around",
+          "another route",
+          "not rated",
+          "classified",
+          "refuse",
+          "clear it",
+          "pyro tech",
+          "long way",
+        ],
+        failKeywords: ["take it", "drive through", "quickly", "it's fine", "shortcut", "just this once"],
+        concept:
+          "You route around it. A standard internal-combustion lift is an ignition source and is not approved for a classified location. The area belongs to the pyro tech — the machine does not enter until they clear it and only if the truck is rated for that classification.",
+      },
       {
         id: "m0-s1",
         technique: "Left-Side Approach",
@@ -250,13 +368,14 @@ export const MODULES: Module[] = [
         heading: "The Legal Reality — Who Certifies You",
         lede: "Here is how the legal reality breaks down according to OSHA standard 29 CFR 1910.178:",
         body: [
-          "OSHA sets the rules, they don't teach the class: OSHA writes the safety standards and regulations that must be followed.",
-          "The legal burden is 100% on the employer: OSHA explicitly states that the employer (the concert labor company, production house, or venue) is the only entity that can officially \"certify\" an operator.",
+          "OSHA sets the rules, they don't teach the class: OSHA writes the safety standards and regulations that must be followed. OSHA does not approve, accredit, or certify any training course — including this one.",
+          "The legal burden sits with the employer: the employer (the concert labor company, production house, or venue) is the party that must certify you have been trained and evaluated, and is accountable if you haven't been.",
+          "But the employer does not have to do the teaching. OSHA has stated that the people who conduct training, refresher training, evaluation, and certification need not be employed by your employer — a union, a training organization, or a joint labor-management program can deliver it. What the employer cannot delegate is responsibility for making sure it actually happened, on your machine, in your workplace.",
         ],
         callout: {
           kind: "hard-rule",
           title: "The official paperwork",
-          body: "When you are legally certified to drive a forklift, the document must list the operator's name, the training date, the evaluation date, and the signature of the specific person who watched you drive.",
+          body: "The certification record must list the operator's name, the date of the training, the date of the evaluation, and the identity of the person(s) who performed the training or evaluation. The standard requires their identity — not necessarily a signature — but a named, reachable evaluator is what makes the record hold up.",
         },
       },
       {
@@ -1536,8 +1655,11 @@ export const MODULES: Module[] = [
         technique: "Smooth-Is-Fast Discipline",
         prompt:
           "The Tour Manager wants the heavy amp rack moved NOW and you're tempted to jerk the levers to speed it up. What's the risk, and what's the principle?",
-        passKeywords: ["smooth", "smooth is fast", "jerk", "rear wheel", "pitch forward", "tip", "gentle", "control"],
-        failKeywords: ["fast", "rush", "yank", "hurry"],
+        // "fast" cannot be a fail keyword here — the principle being tested is
+        // literally "smooth is fast". The unsafe answers are the ones that
+        // reach for speed through the levers, so match those phrasings instead.
+        passKeywords: ["smooth", "smooth is fast", "gentle", "control", "feather", "rear wheel", "pitch forward", "tip"],
+        failKeywords: ["rush", "yank", "hurry", "faster", "jerk the", "speed it up"],
         concept:
           "'Smooth is fast': jerking the levers on a heavy rack can pop a smaller lift's rear wheels off the ground or pitch the load forward into the loaders. Smooth hydraulic control is both safer and, over the shift, faster.",
       },
@@ -1818,12 +1940,27 @@ export const MODULES: Module[] = [
         heading: "The Invisible Mud Tip-Over",
         body: [
           "Festival grounds hide washouts and soft spots under plywood, ground-protection plastic, or a thin dry crust. A telehandler carrying a generator can tip the instant one tire sinks.",
-          "Actively read the terrain — probe questionable ground, watch for sinking or listing, and route over compacted paths. And the grade rule: on ramps, the load always points UPHILL.",
+          "Actively read the terrain — probe questionable ground, watch for sinking or listing, and route over compacted paths.",
         ],
         callout: {
           kind: "tour-reality",
           title: "The ground lies",
           body: "A flat sheet of plywood can hide a washout that swallows a tire. Read the terrain actively; if a tire starts to sink or the machine lists, stop before the point of no return.",
+        },
+      },
+      {
+        heading: "The Grade Rule — It Depends On Whether You're Loaded",
+        lede: "The single most-misquoted rule on a festival site. It is not 'forks uphill, always'.",
+        steps: [
+          "LOADED, on a grade over 10%: the load points UPHILL — ascending AND descending. You drive up forward and back down. The load stays on the high side so it cannot slide off the forks and the center of gravity stays inside the wheelbase.",
+          "UNLOADED: the forks point DOWNHILL. With no load, the counterweight is the heavy end, and the heavy end belongs uphill. Reversing this on an empty machine is a real way to tip one.",
+          "On any grade, loaded or not: tilt the load back if the machine allows it, and raise it only as far as needed to clear the surface.",
+          "Ascend and descend slowly. Never turn across a grade.",
+        ],
+        callout: {
+          kind: "hard-rule",
+          title: "Loaded uphill, empty downhill",
+          body: "Cal/OSHA GISO 3650(t)(14)(A) states it for the loaded case: on grades in excess of 10 percent, LOADED trucks are driven with the load upgrade. The empty-machine convention follows from where the weight is — counterweight to the high side. If you only remember one thing: the HEAVY end goes uphill, and what counts as the heavy end changes when you set the load down.",
         },
       },
     ],
@@ -1889,7 +2026,7 @@ export const MODULES: Module[] = [
         id: "m-out-s4",
         technique: "Uphill Load Rule",
         prompt:
-          "You must move a heavy generator up a festival ramp to the stage deck. Which way does the load point, and why?",
+          "You are CARRYING a heavy generator up a festival ramp to the stage deck. Which way does the load point, and why?",
         passKeywords: [
           "uphill",
           "up hill",
@@ -1898,9 +2035,28 @@ export const MODULES: Module[] = [
           "high side",
           "up the ramp",
         ],
-        failKeywords: ["downhill", "down the", "forward down", "doesn't matter"],
+        failKeywords: ["downhill", "forward down", "doesn't matter"],
         concept:
-          "On any grade, the load always points UPHILL — ascending or descending — to keep the center of gravity behind the machine and stop a forward tip or the load sliding off.",
+          "Loaded on a grade, the load points UPHILL — ascending or descending — so it cannot slide off the forks and the center of gravity stays inside the wheelbase. Cal/OSHA GISO 3650(t)(14)(A) states it for grades over 10 percent. Note the qualifier: this is the LOADED rule.",
+      },
+      {
+        id: "m-out-s4b",
+        technique: "Empty-Machine Grade Rule",
+        prompt:
+          "You've dropped the generator on the deck and you're driving the EMPTY telehandler back down the same ramp. Which way do the forks point now, and why?",
+        passKeywords: [
+          "downhill",
+          "down the grade",
+          "forks down",
+          "point down",
+          "counterweight",
+          "counterweight uphill",
+          "heavy end",
+          "empty",
+        ],
+        failKeywords: ["still uphill", "same as loaded", "always uphill", "doesn't matter"],
+        concept:
+          "Empty, the forks point DOWNHILL. With no load, the counterweight is the heavy end and the heavy end belongs on the high side. 'Forks uphill always' is the most common misquote of this rule — what goes uphill is the heavy end, and that changes the moment you set the load down.",
       },
       {
         id: "m-out-s5",

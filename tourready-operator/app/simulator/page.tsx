@@ -15,7 +15,9 @@ export default function SimulatorPage() {
         <p className="mt-2 text-[var(--color-muted)]">
           The same <code className="text-[var(--color-accent)]">TelehandlerSafetyEngine</code> that
           grades every lift in the platform — exposed as a standalone tool. Adjust the conditions and
-          watch the verdict, derated capacity, and reasoning update live. Runs fully offline.
+          watch the verdict, estimated capacity, and reasoning update live. Runs fully offline. The
+          capacity figure is a conservative teaching estimate — never a substitute for the machine&apos;s
+          load chart.
         </p>
       </div>
 

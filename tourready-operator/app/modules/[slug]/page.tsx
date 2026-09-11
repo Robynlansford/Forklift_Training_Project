@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useParams, notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, Clock, Target, AlertTriangle } from "lucide-react";
 import { MODULES, getModule, moduleThreshold } from "@/lib/curriculum";
 import { useProgress, moduleStatus } from "@/lib/store";
 import { useHydrated } from "@/lib/use-hydrated";
+import { moduleImage } from "@/lib/module-images";
 import { ModuleIcon } from "@/components/icon";
 import { ModuleContent } from "@/components/module-content";
 import { ScenarioTrainer } from "@/components/scenario-trainer";
@@ -24,6 +26,7 @@ export default function ModulePage() {
   const prev = idx > 0 ? MODULES[idx - 1] : null;
   const next = idx < MODULES.length - 1 ? MODULES[idx + 1] : null;
   const status = hydrated ? moduleStatus(module, scores) : "not-started";
+  const photo = moduleImage(module.slug);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
@@ -34,6 +37,23 @@ export default function ModulePage() {
       >
         <ArrowLeft className="h-4 w-4" /> Training Hub
       </Link>
+
+      {/* Hero plate */}
+      {photo && (
+        <div className="relative mt-6 aspect-[21/9] w-full overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)]/70 bg-[var(--color-surface-2)] sm:aspect-[21/8]">
+          <Image
+            src={photo.src}
+            alt={photo.alt}
+            fill
+            priority
+            sizes="(max-width: 1024px) 100vw, 1024px"
+            className="object-cover"
+          />
+          {/* Light bottom vignette only — the title sits below the plate, so nothing
+              needs to be legible on top of it. Keep the photo readable. */}
+          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/35 to-transparent" />
+        </div>
+      )}
 
       {/* Header */}
       <header className="mt-6 border-b border-[var(--color-border)]/60 pb-8">

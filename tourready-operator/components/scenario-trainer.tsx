@@ -310,14 +310,20 @@ function MessageBubble({ msg }: { msg: ChatMsg }) {
               {msg.verdict.source === "offline" && (
                 <span
                   className="inline-flex items-center gap-1 text-[10px] text-[var(--color-muted)]"
-                  title="Graded offline by the deterministic engine"
+                  title="Keyword-matched offline. This checks whether you named the right technique, not whether your reasoning is sound."
                 >
-                  <WifiOff className="h-3 w-3" /> offline
+                  <WifiOff className="h-3 w-3" /> keyword-matched
                 </span>
               )}
             </div>
           )}
           {msg.text}
+          {msg.verdict?.provisional && (
+            <p className="mt-2 border-t border-[var(--color-border)]/50 pt-2 text-[11px] leading-relaxed text-[var(--color-muted)]">
+              Graded offline by keyword match — it can tell whether you named the right technique,
+              not whether your reasoning holds. Treat this as practice, not assessment.
+            </p>
+          )}
         </div>
       </div>
     </motion.div>

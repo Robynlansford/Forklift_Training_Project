@@ -32,6 +32,25 @@ const HAZARDS = [
   { icon: Activity, title: "Dynamic Venues", body: "Festival mud, stage decks, ice-rink insulation, cable bridges. Floors that move and fail under load." },
 ];
 
+/** Load-out floor photography. Captions describe what is happening in the frame. */
+const FLOOR_SHOTS = [
+  {
+    src: "/images/home-spotter.jpg",
+    alt: "A crew member stands clear of a stack of road cases with one hand raised, signaling to a forklift operator on a darkened stage floor.",
+    caption: "One spotter. One signal. The operator moves on the hand, never on the shouting.",
+  },
+  {
+    src: "/images/home-nightfloor.jpg",
+    alt: "Two forklifts working nose-to-nose at night, a road case raised between them, hi-vis crew moving through the gap.",
+    caption: "Two machines sharing one lane. Congestion is the normal condition, not the exception.",
+  },
+  {
+    src: "/images/home-stacked.jpg",
+    alt: "Forklifts carrying road cases at height on a night festival floor, an LED wall and line array behind them.",
+    caption: "Elevated loads over a live working floor — the move warehouse training never rehearses.",
+  },
+];
+
 const STEPS = [
   { icon: BookOpen, n: "01", title: "Theory", body: "Faithful, field-tested curriculum — every named technique, hard rule, and Tour Reality." },
   { icon: Dumbbell, n: "02", title: "Deliberate Practice", body: "Free-text scenarios with no multiple choice. Decide like you're on the floor at load-out." },
@@ -422,6 +441,35 @@ export default function Landing() {
                 <p className="mt-2 text-sm leading-relaxed text-[var(--color-muted)]">{h.body}</p>
               </TiltCard>
             </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── The floor ────────────────────────────────────────── */}
+      <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {/* No scroll-reveal here: this section sits below the pinned scroll-film,
+              which drives its own virtual scroll — viewport detection is unreliable
+              this far down, and these must never fail to render. */}
+          {FLOOR_SHOTS.map((shot) => (
+            <figure
+              key={shot.src}
+              className="group relative overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)]/70"
+            >
+              <div className="relative aspect-[4/3]">
+                <Image
+                  src={shot.src}
+                  alt={shot.alt}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 33vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                />
+                <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 to-transparent" />
+              </div>
+              <figcaption className="absolute inset-x-0 bottom-0 p-4 text-[13px] font-medium leading-snug text-white">
+                {shot.caption}
+              </figcaption>
+            </figure>
           ))}
         </div>
       </section>

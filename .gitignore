@@ -9,6 +9,7 @@ scroll-intro/.upload_url
 # Dead cloudflared quick-tunnel logs. Hostnames are ephemeral; publishing them
 # is pure noise and leaks which machine served the demo.
 tunnel-url.txt
+tunnel-stdout.txt
 
 # ── Dependencies & build output ──────────────────────────────────────────
 node_modules/

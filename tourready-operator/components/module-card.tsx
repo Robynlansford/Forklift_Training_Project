@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight, Clock } from "lucide-react";
 import type { Module } from "@/lib/curriculum";
+import { moduleImage } from "@/lib/module-images";
 import { ModuleIcon } from "./icon";
 import { StatusPill } from "./status-pill";
 import type { ModuleScore } from "@/lib/store";
@@ -22,6 +24,7 @@ export function ModuleCard({
   const score = scores[module.slug];
   const pct = score ? Math.round((score.pass / score.total) * 100) : null;
   const isCapstone = module.slug === "capstone";
+  const photo = moduleImage(module.slug);
 
   return (
     <motion.div
@@ -44,6 +47,20 @@ export function ModuleCard({
         >
           {isCapstone && (
             <span className="absolute right-0 top-0 h-24 w-24 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.18),transparent_70%)]" />
+          )}
+
+          {photo && (
+            <div className="relative -mx-5 -mt-5 mb-4 h-32 overflow-hidden bg-[var(--color-surface-2)]">
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+              />
+              {/* Fade the plate into the card so the icon row reads cleanly */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-surface)] via-[var(--color-surface)]/25 to-transparent" />
+            </div>
           )}
 
           <div className="mb-4 flex items-start justify-between">

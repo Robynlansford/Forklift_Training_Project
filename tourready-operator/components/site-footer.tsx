@@ -13,13 +13,16 @@ export function SiteFooter() {
             <span className="font-semibold text-[var(--color-canvas-ink)]">
               TourReady Operator
             </span>{" "}
-            satisfies the formal-instruction component OSHA (29 CFR 1910.178(l))
-            requires for powered industrial truck operators. It does not replace
-            the practical hands-on training and workplace evaluation the same
-            standard requires — the employer, not OSHA or this platform,
-            certifies completion once all three are done. Always complete your
-            employer&apos;s hands-on training and evaluation before operating any
-            lift equipment.
+            is designed to support the formal-instruction component described in
+            29 CFR 1910.178(l). It is not accredited or approved by OSHA — OSHA
+            does not approve training courses — and completing it does not by
+            itself make you a certified operator. It does not replace the
+            practical hands-on training or the workplace evaluation the same
+            standard requires; your employer, not OSHA or this platform,
+            determines whether your training is adequate for the machines and
+            the site you work on, and certifies you once all three are done.
+            Always complete your employer&apos;s hands-on training and evaluation
+            before operating any lift equipment.
           </p>
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-[var(--color-muted)]">
             <Link href="/dashboard" className="hover:text-[var(--color-canvas-ink)]">

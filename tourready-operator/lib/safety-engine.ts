@@ -1,20 +1,23 @@
 /**
  * Telehandler Safety Engine — Concert & Festival Production
  * ----------------------------------------------------------------------------
- * Faithful TypeScript port of the canonical Python `TelehandlerSafetyEngine`.
- * This is the SINGLE SOURCE OF TRUTH for any safety evaluation in the app.
+ * A TEACHING MODEL. It is not a load chart and must never be used in place of
+ * one. Every capacity number it produces is a conservative illustration of how
+ * reach, ground and boom angle eat into a machine's rating — the authoritative
+ * number is the placarded chart on the machine in front of you.
  *
- * The evaluation runs in strict priority phases. The first failing check wins:
+ * Evaluation runs in strict priority phases; the first failing check wins:
  *   PHASE 1 — BLOCKER    (rigging zone, STOP lexicon, command echo)
- *   PHASE 2 — HARD_STOP  (wind threshold, derated capacity exceeded)
- *   PHASE 3 — CAUTION    (pushers in halo zone / crew on load)
+ *   PHASE 2 — HARD_STOP  (wind threshold, estimated capacity exceeded)
+ *   PHASE 3 — CAUTION    (fatigue, flat boom, crew in the halo zone)
  *   PHASE 4 — GO         (all checks passed)
  *
- * Calculations mirror the source exactly:
- *   • Ground-type derating (concert/festival-specific surfaces)
- *   • Fatigue modifier (late-night + long-shift compounding)
- *   • Reach derating
- *   • Falling-object impact force (kinetic, lb·ft/s units as in source)
+ * Capacity model (changed 2026-09-08 after audit finding F-02):
+ *   The previous model derated reach linearly with a hard floor at 0.5, so it
+ *   reported an identical capacity at 15 ft of reach and at 40 ft, and erred
+ *   permissive — the dangerous direction. It is now a moment balance, which is
+ *   at least physically motivated: load moment = weight x horizontal distance,
+ *   so capacity falls as 1/distance and never plateaus.
  * ----------------------------------------------------------------------------
  */
 
@@ -44,11 +47,41 @@ export const GROUND_LABELS: Record<keyof typeof GROUND_DERATE | string, string> 
   LED_WALL: "LED wall sub-floor (processor deck)",
 };
 
-export const BASE_CAPACITY_LBS = 10_000;
+/**
+ * Default rated capacity when the operator has not entered the machine's own.
+ * This is a starting value for the illustration, not a spec for any machine —
+ * enter the rating from the data plate.
+ */
+export const DEFAULT_RATED_CAPACITY_LBS = 10_000;
+
+/** Retained for backwards compatibility with existing imports. */
+export const BASE_CAPACITY_LBS = DEFAULT_RATED_CAPACITY_LBS;
+
+/**
+ * Wind speed at which high lifts stop. The curriculum states the rule as
+ * "at or above 15 mph", so the comparison is >= — the previous `>` let a
+ * steady 15.0 mph reading pass while the course's own scenario failed it.
+ * The real limit for a given machine comes from its manual and is often lower.
+ */
 export const WIND_THRESHOLD_MPH = 15;
+
+/**
+ * Nominal horizontal distance from the tipping axis to the load at zero reach,
+ * in feet. Anchors the moment model so a zero-reach lift scores 1.0.
+ */
+const PIVOT_TO_LOAD_FT = 4;
+
+/** Boom angles at or below this (degrees from horizontal) are the steep part of
+ *  every real load chart — flagged, not silently averaged away. */
+const FLAT_BOOM_DEGREES = 30;
+
+/** Shift length beyond which the engine stops issuing a clean GO. */
+const FATIGUE_SHIFT_HRS = 12;
 
 export interface SafetyInputs {
   loadWeightLbs: number;
+  /** Machine's rated capacity from its data plate. Defaults to 10,000 lb. */
+  ratedCapacityLbs?: number;
   groundType?: keyof typeof GROUND_DERATE | string;
   windSpeedMph?: number;
   riggingZoneClear?: boolean;
@@ -63,49 +96,94 @@ export interface SafetyInputs {
   shiftDurationHrs?: number;
 }
 
+/** Free-fall result for a dropped object. Energy and speed are well defined;
+ *  impact *force* is not, without a stopping distance. */
+export interface FallingObject {
+  /** Kinetic energy at impact, ft·lb. Equals weight x drop height. */
+  energyFtLb: number;
+  velocityFtPerSec: number;
+  velocityMph: number;
+  weightLbs: number;
+  dropHeightFt: number;
+}
+
 export interface SafetyResult {
   status: SafetyStatus;
   reasoning: string;
-  deratedCapacityLbs: number;
-  estimatedImpactForceLbs: number | null;
-  /** Breakdown of the derating math, surfaced for the simulator's reasoning panel. */
+  /** Conservative teaching estimate. NOT a load-chart value. */
+  estimatedCapacityLbs: number;
+  fallingObject: FallingObject | null;
   factors: {
-    base: number;
+    ratedCapacity: number;
     groundDerate: number;
-    fatigueDerate: number;
     reachDerate: number;
+    boomAngleDerate: number;
   } | null;
+  /** Always true — surfaced in the UI so the number is never mistaken for a chart. */
+  advisory: true;
 }
 
 const GRAVITY = 32.2; // ft/s^2
 
 /**
- * Falling-object impact force, ported exactly from the source:
- *   v = sqrt(2 * g * h);  m = weight / g;  impact = m * v
- * Returns the same lb·(ft/s) magnitude the source manual quotes.
+ * Free-fall energy and speed for a dropped object.
+ *
+ * The previous implementation returned `mass x velocity` — momentum, in lb·s —
+ * and the UI printed it as "lb impact force". For a 2 lb shackle from 60 ft
+ * that rendered as "4 lb", which reads as harmless inside the platform's most
+ * severe alert (audit finding F-04).
+ *
+ * Impact force cannot be derived from weight and height alone; it depends on
+ * how quickly the object is brought to rest. Energy and speed can, so those
+ * are what we report.
  */
-export function calcFallingObjectImpact(weightLbs: number, dropHeightFt: number): number {
-  const velocity = Math.sqrt(2 * GRAVITY * dropHeightFt);
-  const mass = weightLbs / GRAVITY;
-  return mass * velocity;
+export function calcFallingObject(weightLbs: number, dropHeightFt: number): FallingObject {
+  const velocityFtPerSec = Math.sqrt(2 * GRAVITY * dropHeightFt);
+  return {
+    energyFtLb: weightLbs * dropHeightFt,
+    velocityFtPerSec,
+    velocityMph: velocityFtPerSec * 0.681818,
+    weightLbs,
+    dropHeightFt,
+  };
 }
 
 /**
- * Fatigue modifier — compounds a late-night penalty with a long-shift penalty.
- * Mirrors the source: nights (23:00–06:59) apply 0.95; shifts >12h ramp down to
- * a 0.8 floor; shifts >10h apply 0.90.
+ * Capacity remaining at a given horizontal reach, as a fraction of rating.
+ *
+ * Moment balance: the load's overturning moment is weight x horizontal
+ * distance, so for a fixed stability moment the allowable weight falls as
+ * 1/distance. Monotonic and unbounded below — it never plateaus the way the
+ * old `max(1 - reach/25, 0.5)` did.
  */
-export function calcFatigueModifier(timeOfDayHrs: number, shiftDurationHrs: number): number {
-  let modifier = 1.0;
-  if (timeOfDayHrs >= 23 || (timeOfDayHrs >= 0 && timeOfDayHrs < 7)) {
-    modifier *= 0.95;
-  }
-  if (shiftDurationHrs > 12) {
-    modifier *= Math.max(0.8, 1.0 - (shiftDurationHrs - 12) * 0.05);
-  } else if (shiftDurationHrs > 10) {
-    modifier *= 0.9;
-  }
-  return modifier;
+export function reachCapacityFactor(reachFt: number): number {
+  const d = PIVOT_TO_LOAD_FT + Math.max(0, reachFt);
+  return PIVOT_TO_LOAD_FT / d;
+}
+
+/**
+ * Extra margin taken as the boom flattens toward horizontal, where real charts
+ * fall away fastest. Reach already carries most of this effect, so the factor
+ * is deliberately mild — it exists so a flat-boom pick is never scored the same
+ * as a steep one, not to model a specific machine.
+ */
+export function boomAngleFactor(boomAngleDegrees: number | undefined): number {
+  if (boomAngleDegrees == null) return 1;
+  const a = Math.max(0, Math.min(90, boomAngleDegrees));
+  if (a >= 60) return 1;
+  // 60° -> 1.00 down to 0° -> 0.85
+  return 1 - ((60 - a) / 60) * 0.15;
+}
+
+/**
+ * Operator-fatigue state.
+ *
+ * Fatigue is NOT folded into capacity — a tired operator does not change where
+ * a machine tips (audit finding F-13). It gates the operation instead.
+ */
+export function isFatigueElevated(timeOfDayHrs: number, shiftDurationHrs: number): boolean {
+  const lateNight = timeOfDayHrs >= 23 || (timeOfDayHrs >= 0 && timeOfDayHrs < 7);
+  return shiftDurationHrs > FATIGUE_SHIFT_HRS || (lateNight && shiftDurationHrs > 10);
 }
 
 /**
@@ -115,6 +193,7 @@ export function calcFatigueModifier(timeOfDayHrs: number, shiftDurationHrs: numb
 export function evaluateSafety(inputs: SafetyInputs): SafetyResult {
   const {
     loadWeightLbs,
+    ratedCapacityLbs = DEFAULT_RATED_CAPACITY_LBS,
     groundType = "CONCRETE",
     windSpeedMph = 0,
     riggingZoneClear = true,
@@ -122,116 +201,150 @@ export function evaluateSafety(inputs: SafetyInputs): SafetyResult {
     commandEchoed = false,
     pushersPresent = 0,
     pushersClearedHaloZone = true,
+    boomAngleDegrees,
     liftHeightFt = 0,
     reachFt = 0,
     timeOfDayHrs = 12,
     shiftDurationHrs = 0,
   } = inputs;
 
+  const base = <T extends Partial<SafetyResult>>(r: T) => ({ advisory: true as const, ...r });
+
   // ── PHASE 1: BLOCKER CHECKS ───────────────────────────────────────────────
   if (!riggingZoneClear) {
     const fallHeight = Math.max(liftHeightFt, 60.0);
-    const impactForce = calcFallingObjectImpact(2.0, fallHeight);
-    return {
-      status: "BLOCKER",
-      reasoning: `Rigging zone NOT clear. Overhead hazard confirmed (est. ${impactForce.toFixed(
-        0
-      )} lb impact force from typical rig height). STOP operations until cleared.`,
-      deratedCapacityLbs: 0,
-      estimatedImpactForceLbs: impactForce,
+    const obj = calcFallingObject(2.0, fallHeight);
+    return base({
+      status: "BLOCKER" as const,
+      reasoning:
+        `Rigging zone NOT clear. A 2 lb shackle dropped from ${fallHeight.toFixed(0)} ft arrives at ` +
+        `${obj.velocityMph.toFixed(0)} mph carrying ${obj.energyFtLb.toFixed(0)} ft·lb — the same energy as a ` +
+        `${obj.energyFtLb.toFixed(0)} lb weight dropped one foot, concentrated on a point. STOP until cleared.`,
+      estimatedCapacityLbs: 0,
+      fallingObject: obj,
       factors: null,
-    };
+    }) as SafetyResult;
   }
 
   if (stopCommandUsed.toUpperCase() !== "STOP") {
-    return {
-      status: "BLOCKER",
+    return base({
+      status: "BLOCKER" as const,
       reasoning: `Invalid command received: '${stopCommandUsed}'. Standard lexicon requires 'STOP'. Do not proceed.`,
-      deratedCapacityLbs: 0,
-      estimatedImpactForceLbs: null,
+      estimatedCapacityLbs: 0,
+      fallingObject: null,
       factors: null,
-    };
+    }) as SafetyResult;
   }
 
   if (!commandEchoed) {
-    return {
-      status: "BLOCKER",
+    return base({
+      status: "BLOCKER" as const,
       reasoning:
         "'STOP' was NOT echoed by riggers/ground crew. Confirmation required before proceeding.",
-      deratedCapacityLbs: 0,
-      estimatedImpactForceLbs: null,
+      estimatedCapacityLbs: 0,
+      fallingObject: null,
       factors: null,
-    };
+    }) as SafetyResult;
   }
 
   // ── PHASE 2: HARD_STOP CHECKS ─────────────────────────────────────────────
-  if (windSpeedMph > WIND_THRESHOLD_MPH) {
-    return {
-      status: "HARD_STOP",
-      reasoning: `Wind speed ${windSpeedMph.toFixed(
-        1
-      )} mph exceeds ${WIND_THRESHOLD_MPH} mph safety threshold. Tip-over risk with elevated load.`,
-      deratedCapacityLbs: 0,
-      estimatedImpactForceLbs: null,
+  if (windSpeedMph >= WIND_THRESHOLD_MPH) {
+    return base({
+      status: "HARD_STOP" as const,
+      reasoning:
+        `Wind speed ${windSpeedMph.toFixed(1)} mph is at or above the ${WIND_THRESHOLD_MPH} mph threshold. ` +
+        `No high lifts. Check the machine's manual — its limit may be lower still.`,
+      estimatedCapacityLbs: 0,
+      fallingObject: null,
       factors: null,
-    };
+    }) as SafetyResult;
   }
 
   const groundDerate = GROUND_DERATE[String(groundType).toUpperCase()] ?? 0.7;
-  const fatigueDerate = calcFatigueModifier(timeOfDayHrs, shiftDurationHrs);
-  const reachDerate = Math.max(1.0 - reachFt / 25.0, 0.5);
+  const reachDerate = reachCapacityFactor(reachFt);
+  const boomDerate = boomAngleFactor(boomAngleDegrees);
 
-  let finalCapacity = BASE_CAPACITY_LBS * groundDerate * fatigueDerate * reachDerate;
-  finalCapacity = Math.max(finalCapacity, 100.0);
+  const estimatedCapacityLbs = Math.max(
+    ratedCapacityLbs * groundDerate * reachDerate * boomDerate,
+    0
+  );
 
   const factors = {
-    base: BASE_CAPACITY_LBS,
+    ratedCapacity: ratedCapacityLbs,
     groundDerate,
-    fatigueDerate,
     reachDerate,
+    boomAngleDerate: boomDerate,
   };
 
-  if (loadWeightLbs > finalCapacity) {
-    return {
-      status: "HARD_STOP",
-      reasoning: `Load ${loadWeightLbs.toFixed(0)} lbs exceeds derated capacity ${finalCapacity.toFixed(
-        0
-      )} lbs. Reduce load or shorten reach.`,
-      deratedCapacityLbs: finalCapacity,
-      estimatedImpactForceLbs: null,
+  if (loadWeightLbs > estimatedCapacityLbs) {
+    return base({
+      status: "HARD_STOP" as const,
+      reasoning:
+        `Load ${loadWeightLbs.toFixed(0)} lb exceeds the estimated ${estimatedCapacityLbs.toFixed(0)} lb ` +
+        `available at ${reachFt.toFixed(0)} ft of reach. Shorten the reach, split the load, or reposition — ` +
+        `and confirm against the machine's load chart before any pick.`,
+      estimatedCapacityLbs,
+      fallingObject: null,
       factors,
-    };
+    }) as SafetyResult;
   }
 
   // ── PHASE 3: CAUTION CHECKS ───────────────────────────────────────────────
   if (pushersPresent > 0 && !pushersClearedHaloZone) {
-    return {
-      status: "CAUTION",
-      reasoning: `Pushers (${pushersPresent}) detected in 3-ft halo zone. Hold movement until clear.`,
-      deratedCapacityLbs: finalCapacity,
-      estimatedImpactForceLbs: null,
+    return base({
+      status: "CAUTION" as const,
+      reasoning: `Pushers (${pushersPresent}) detected in the 3-ft halo zone. Hold movement until clear.`,
+      estimatedCapacityLbs,
+      fallingObject: null,
       factors,
-    };
+    }) as SafetyResult;
+  }
+
+  if (isFatigueElevated(timeOfDayHrs, shiftDurationHrs)) {
+    return base({
+      status: "CAUTION" as const,
+      reasoning:
+        `${shiftDurationHrs.toFixed(0)} h into the shift at ${String(Math.floor(timeOfDayHrs)).padStart(2, "0")}:00 — ` +
+        `reaction time and peripheral scanning are degraded. The machine's capacity is unchanged; your margin is not. ` +
+        `Slow every movement and request relief before complex picks.`,
+      estimatedCapacityLbs,
+      fallingObject: null,
+      factors,
+    }) as SafetyResult;
+  }
+
+  if (boomAngleDegrees != null && boomAngleDegrees <= FLAT_BOOM_DEGREES) {
+    return base({
+      status: "CAUTION" as const,
+      reasoning:
+        `Boom at ${boomAngleDegrees.toFixed(0)}° is in the flat range where load charts fall off fastest. ` +
+        `Verify this exact pick on the chart before committing.`,
+      estimatedCapacityLbs,
+      fallingObject: null,
+      factors,
+    }) as SafetyResult;
   }
 
   if (pushersPresent > 0) {
-    return {
-      status: "CAUTION",
-      reasoning: `Ground crew (${pushersPresent}) on load. Maintain slow speed.`,
-      deratedCapacityLbs: finalCapacity,
-      estimatedImpactForceLbs: null,
+    return base({
+      status: "CAUTION" as const,
+      reasoning: `Ground crew (${pushersPresent}) on load. Maintain slow speed and keep the halo clear.`,
+      estimatedCapacityLbs,
+      fallingObject: null,
       factors,
-    };
+    }) as SafetyResult;
   }
 
   // ── PHASE 4: GO ───────────────────────────────────────────────────────────
-  return {
-    status: "GO",
-    reasoning: "All safety checks passed. Maintain Up-Look protocol and 'STOP' readiness.",
-    deratedCapacityLbs: finalCapacity,
-    estimatedImpactForceLbs: null,
+  return base({
+    status: "GO" as const,
+    reasoning:
+      "Checks passed on the values entered. Confirm the pick against the machine's load chart, " +
+      "maintain Up-Look protocol and keep 'STOP' readiness.",
+    estimatedCapacityLbs,
+    fallingObject: null,
     factors,
-  };
+  }) as SafetyResult;
 }
 
 /** Visual + semantic metadata for each status — consumed across the UI. */

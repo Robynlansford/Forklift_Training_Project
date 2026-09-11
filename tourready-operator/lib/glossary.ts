@@ -125,11 +125,11 @@ export const TECHNIQUES: TechniqueCard[] = [
     rule: "Read the terrain actively. If a tire sinks or the machine lists, stop before the point of no return — never power through.",
   },
   {
-    name: "Uphill Load Rule",
+    name: "Grade Rule (Loaded vs Empty)",
     category: "Physics",
     moduleSlug: "outdoor-festival-ops",
-    summary: "Point the load uphill on any grade.",
-    rule: "Ascending or descending, the load always points uphill — keeps the center of gravity behind the machine and stops a forward tip.",
+    summary: "The heavy end goes uphill — and which end that is changes when you set the load down.",
+    rule: "LOADED on a grade: the load points uphill, ascending and descending, so it cannot slide off the forks. EMPTY: the forks point downhill, because the counterweight is now the heavy end and belongs on the high side. Cal/OSHA GISO 3650(t)(14)(A) states the loaded case for grades over 10 percent. 'Forks uphill always' is the common misquote.",
   },
   {
     name: "Hot Dog vs. Hamburger",
@@ -369,9 +369,10 @@ export const QUICK_REFERENCE = {
     "Always perform the Up-Look before entering rigging zones",
     "Always use the Clear-and-Release Pause before hands touch the load",
     "Always yield to pushing crews (Pusher's Blindness Rule)",
-    "Always cross cable ramps at 45 degrees",
+    "Always cross cable ramps at 45 degrees — but take loading ramps and dock transitions STRAIGHT-ON",
     "Always read the load chart for the boom's actual position (telehandler)",
-    "Always point the load UPHILL on any grade",
+    "Always put the HEAVY end uphill — loaded, that's the load; empty, that's the counterweight",
+    "Always stay in the seat if it tips — grip, brace, lean away, never jump",
     "Always call STOP the instant something feels wrong",
   ],
   commands: [
