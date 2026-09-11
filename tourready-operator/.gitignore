@@ -29,3 +29,6 @@ next-env.d.ts
 
 # Cloudflare Workers adapter build output
 .open-next/
+
+# Wrangler local dev state (miniflare cache)
+.wrangler/
