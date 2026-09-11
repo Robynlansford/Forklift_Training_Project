@@ -24,8 +24,8 @@ const DEFAULTS: Required<
     | "groundType"
     | "windSpeedMph"
     | "riggingZoneClear"
-    | "stopCommandUsed"
-    | "commandEchoed"
+    | "commsCheckPhrase"
+    | "commsCheckEchoed"
     | "pushersPresent"
     | "pushersClearedHaloZone"
     | "boomAngleDegrees"
@@ -39,8 +39,8 @@ const DEFAULTS: Required<
   groundType: "CONCRETE",
   windSpeedMph: 6,
   riggingZoneClear: true,
-  stopCommandUsed: "STOP",
-  commandEchoed: true,
+  commsCheckPhrase: "STOP",
+  commsCheckEchoed: true,
   pushersPresent: 0,
   pushersClearedHaloZone: true,
   boomAngleDegrees: 45,
@@ -69,7 +69,7 @@ const PRESETS: Preset[] = [
       groundType: "CONCRETE",
       windSpeedMph: 5,
       riggingZoneClear: true,
-      commandEchoed: true,
+      commsCheckEchoed: true,
       pushersPresent: 0,
       timeOfDayHrs: 13,
       shiftDurationHrs: 4,
@@ -85,7 +85,7 @@ const PRESETS: Preset[] = [
       groundType: "LED_WALL",
       windSpeedMph: 17,
       riggingZoneClear: true,
-      commandEchoed: true,
+      commsCheckEchoed: true,
       pushersPresent: 0,
       timeOfDayHrs: 2,
       shiftDurationHrs: 14,
@@ -132,7 +132,7 @@ const PRESETS: Preset[] = [
     description: "STOP given but never echoed by ground crew.",
     values: {
       loadWeightLbs: 3000,
-      commandEchoed: false,
+      commsCheckEchoed: false,
     },
   },
 ];
@@ -344,10 +344,10 @@ export function SafetyEngineForm() {
             <Radio className="h-4 w-4 text-[var(--color-accent)]" /> Commands & Crew
           </h2>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="STOP command issued" hint="standard lexicon">
+            <Field label="Pre-lift comms check" hint="the crew's stop word">
               <Input
-                value={v.stopCommandUsed}
-                onChange={(e) => set("stopCommandUsed", e.target.value)}
+                value={v.commsCheckPhrase}
+                onChange={(e) => set("commsCheckPhrase", e.target.value)}
                 placeholder="STOP"
               />
             </Field>
@@ -361,10 +361,10 @@ export function SafetyEngineForm() {
               danger={!v.riggingZoneClear}
             />
             <Toggle
-              label="'STOP' echoed by crew"
-              checked={v.commandEchoed}
-              onChange={(b) => set("commandEchoed", b)}
-              danger={!v.commandEchoed}
+              label="Echoed back by crew"
+              checked={v.commsCheckEchoed}
+              onChange={(b) => set("commsCheckEchoed", b)}
+              danger={!v.commsCheckEchoed}
             />
             <Toggle
               label="Pushers cleared halo zone"
@@ -414,6 +414,45 @@ export function SafetyEngineForm() {
                 {result.reasoning}
               </p>
             </div>
+
+            {result.findings.length > 0 && (
+              <div>
+                <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+                  All findings ({result.findings.length})
+                </p>
+                <ul className="space-y-2">
+                  {result.findings.map((f) => {
+                    const fm = STATUS_META[f.severity];
+                    return (
+                      <li
+                        key={f.title}
+                        className="rounded-lg border p-2.5"
+                        style={{ borderColor: `${fm.color}55`, background: fm.bg }}
+                      >
+                        <div className="flex items-baseline gap-2">
+                          <span
+                            className="text-[10px] font-bold uppercase tracking-wider"
+                            style={{ color: fm.color }}
+                          >
+                            {fm.label}
+                          </span>
+                          <span className="text-[12.5px] font-semibold text-[var(--color-text)]">
+                            {f.title}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-[12px] leading-relaxed text-[var(--color-text)]/80">
+                          {f.detail}
+                        </p>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <p className="mt-2 text-[11px] leading-relaxed text-[var(--color-muted)]">
+                  Every condition is listed at once, not one at a time — a real pre-lift read is the
+                  whole picture, not the first thing that trips.
+                </p>
+              </div>
+            )}
 
             {result.estimatedCapacityLbs > 0 && (
               <div className="rounded-lg border border-[var(--color-border)]/60 bg-[var(--color-surface-2)]/40 p-3.5">
@@ -465,7 +504,10 @@ export function SafetyEngineForm() {
                 </dl>
                 <p className="mt-2.5 text-[11px] leading-relaxed text-[var(--color-muted)]">
                   Operator fatigue is deliberately absent from this product — being tired does not
-                  change where the machine tips. It is raised separately as a CAUTION.
+                  change where the machine tips. It is raised separately as a CAUTION. The ground
+                  figure is a planning heuristic, not a measured value: soft ground is really a
+                  ground-bearing-pressure calculation, which needs the machine&apos;s contact area and
+                  a real read of the surface.
                 </p>
               </div>
             )}

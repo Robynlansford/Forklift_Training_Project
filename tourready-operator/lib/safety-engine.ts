@@ -23,7 +23,21 @@
 
 export type SafetyStatus = "GO" | "CAUTION" | "HARD_STOP" | "BLOCKER";
 
-/** Concert/festival ground surfaces and their capacity derating multipliers. */
+/**
+ * Ground-surface margins.
+ *
+ * NOT measured values and NOT from any standard (audit finding F-14). These are
+ * conservative planning heuristics: an ordering of how much confidence a surface
+ * deserves, expressed as a multiplier so the simulator can show the effect. The
+ * two-decimal form implies a precision that does not exist behind them — read
+ * them as "mud deserves a lot more margin than concrete", not as engineering.
+ *
+ * What actually governs a pick on soft ground is ground bearing pressure: the
+ * machine's weight plus load spread over its contact patch, against the ground's
+ * allowable bearing capacity. That calculation needs the machine's data, the
+ * outrigger or tyre contact area, and a real assessment of the ground. It is not
+ * this table, and this table is not a substitute for it.
+ */
 export const GROUND_DERATE: Record<string, number> = {
   CONCRETE: 1.0,
   ASPHALT: 1.0,
@@ -85,8 +99,18 @@ export interface SafetyInputs {
   groundType?: keyof typeof GROUND_DERATE | string;
   windSpeedMph?: number;
   riggingZoneClear?: boolean;
-  stopCommandUsed?: string;
-  commandEchoed?: boolean;
+  /**
+   * The phrase used in the PRE-LIFT comms check — should be "STOP".
+   *
+   * Renamed from `stopCommandUsed` (audit finding F-16). The old name read as
+   * "a STOP was called", which inverted the gate: calling STOP means all motion
+   * halts, yet the engine treated an echoed STOP as clearance to proceed. What
+   * is actually being modelled is the check that crew and operator share the
+   * stop word and that echo discipline works before the pick starts.
+   */
+  commsCheckPhrase?: string;
+  /** Was the comms-check phrase echoed back by the ground crew? */
+  commsCheckEchoed?: boolean;
   pushersPresent?: number;
   pushersClearedHaloZone?: boolean;
   boomAngleDegrees?: number;
@@ -94,6 +118,14 @@ export interface SafetyInputs {
   reachFt?: number;
   timeOfDayHrs?: number;
   shiftDurationHrs?: number;
+}
+
+/** One thing the engine found wrong, or worth flagging, about this pick. */
+export interface Finding {
+  severity: SafetyStatus;
+  /** Short label for the UI list. */
+  title: string;
+  detail: string;
 }
 
 /** Free-fall result for a dropped object. Energy and speed are well defined;
@@ -108,8 +140,18 @@ export interface FallingObject {
 }
 
 export interface SafetyResult {
+  /** The most severe finding. Kept for callers that only need one verdict. */
   status: SafetyStatus;
   reasoning: string;
+  /**
+   * EVERY finding, most severe first — not just the first one that tripped.
+   *
+   * The engine used to return on the first failing check (audit finding F-15),
+   * so a pick with 40 mph wind AND triple the rated load reported only the
+   * wind. Fix that, resubmit, meet the next one. Real pre-lift assessment is
+   * holistic, so the whole picture is returned at once.
+   */
+  findings: Finding[];
   /** Conservative teaching estimate. NOT a load-chart value. */
   estimatedCapacityLbs: number;
   fallingObject: FallingObject | null;
@@ -185,10 +227,21 @@ export function isFatigueElevated(timeOfDayHrs: number, shiftDurationHrs: number
   const lateNight = timeOfDayHrs >= 23 || (timeOfDayHrs >= 0 && timeOfDayHrs < 7);
   return shiftDurationHrs > FATIGUE_SHIFT_HRS || (lateNight && shiftDurationHrs > 10);
 }
+/** Severity ordering, least to most severe. */
+const SEVERITY_RANK: Record<SafetyStatus, number> = {
+  GO: 0,
+  CAUTION: 1,
+  HARD_STOP: 2,
+  BLOCKER: 3,
+};
 
 /**
  * Evaluate operational conditions for a concert/festival telehandler lift.
- * Returns the first failing safety state in strict phase priority order.
+ *
+ * Collects EVERY finding rather than returning on the first failure, so the
+ * operator sees the whole picture at once instead of fixing hazards one at a
+ * time (audit finding F-15). `status` is the most severe finding; `findings`
+ * holds all of them, most severe first.
  */
 export function evaluateSafety(inputs: SafetyInputs): SafetyResult {
   const {
@@ -197,8 +250,8 @@ export function evaluateSafety(inputs: SafetyInputs): SafetyResult {
     groundType = "CONCRETE",
     windSpeedMph = 0,
     riggingZoneClear = true,
-    stopCommandUsed = "",
-    commandEchoed = false,
+    commsCheckPhrase = "",
+    commsCheckEchoed = false,
     pushersPresent = 0,
     pushersClearedHaloZone = true,
     boomAngleDegrees,
@@ -208,67 +261,74 @@ export function evaluateSafety(inputs: SafetyInputs): SafetyResult {
     shiftDurationHrs = 0,
   } = inputs;
 
-  const base = <T extends Partial<SafetyResult>>(r: T) => ({ advisory: true as const, ...r });
+  const findings: Finding[] = [];
+  let fallingObject: FallingObject | null = null;
 
-  // ── PHASE 1: BLOCKER CHECKS ───────────────────────────────────────────────
+  // ── Overhead hazard ───────────────────────────────────────────────────────
   if (!riggingZoneClear) {
     const fallHeight = Math.max(liftHeightFt, 60.0);
-    const obj = calcFallingObject(2.0, fallHeight);
-    return base({
-      status: "BLOCKER" as const,
-      reasoning:
-        `Rigging zone NOT clear. A 2 lb shackle dropped from ${fallHeight.toFixed(0)} ft arrives at ` +
-        `${obj.velocityMph.toFixed(0)} mph carrying ${obj.energyFtLb.toFixed(0)} ft·lb — the same energy as a ` +
-        `${obj.energyFtLb.toFixed(0)} lb weight dropped one foot, concentrated on a point. STOP until cleared.`,
-      estimatedCapacityLbs: 0,
-      fallingObject: obj,
-      factors: null,
-    }) as SafetyResult;
+    fallingObject = calcFallingObject(2.0, fallHeight);
+    findings.push({
+      severity: "BLOCKER",
+      title: "Rigging zone not clear",
+      detail:
+        `A 2 lb shackle dropped from ${fallHeight.toFixed(0)} ft arrives at ` +
+        `${fallingObject.velocityMph.toFixed(0)} mph carrying ${fallingObject.energyFtLb.toFixed(0)} ft·lb — ` +
+        `the same energy as a ${fallingObject.energyFtLb.toFixed(0)} lb weight dropped one foot, ` +
+        `concentrated on a point. STOP until the airspace is cleared.`,
+    });
   }
 
-  if (stopCommandUsed.toUpperCase() !== "STOP") {
-    return base({
-      status: "BLOCKER" as const,
-      reasoning: `Invalid command received: '${stopCommandUsed}'. Standard lexicon requires 'STOP'. Do not proceed.`,
-      estimatedCapacityLbs: 0,
-      fallingObject: null,
-      factors: null,
-    }) as SafetyResult;
+  // ── Pre-lift comms check ──────────────────────────────────────────────────
+  // Not a live STOP call — this is the check that everyone shares the stop word
+  // and that echo discipline works. An unperformed check is an omission
+  // (CAUTION), not a lockout; the old code treated an empty field as an
+  // "Invalid command received: ''" BLOCKER (audit finding F-16).
+  const phrase = commsCheckPhrase.trim();
+  if (phrase === "") {
+    findings.push({
+      severity: "CAUTION",
+      title: "Comms check not performed",
+      detail:
+        "No pre-lift comms check recorded. Confirm the crew's stop word and echo it back before the pick.",
+    });
+  } else if (phrase.toUpperCase() !== "STOP") {
+    findings.push({
+      severity: "BLOCKER",
+      title: "Non-standard stop word",
+      detail:
+        `Comms check used '${phrase}'. The standard lexicon is 'STOP' — a crew that does not share ` +
+        `one word does not have a working stop. Do not proceed.`,
+    });
+  } else if (!commsCheckEchoed) {
+    findings.push({
+      severity: "BLOCKER",
+      title: "'STOP' not echoed",
+      detail:
+        "'STOP' was called and not echoed by the riggers/ground crew. An un-echoed stop word is an " +
+        "unverified stop. Re-run the check before any motion.",
+    });
   }
 
-  if (!commandEchoed) {
-    return base({
-      status: "BLOCKER" as const,
-      reasoning:
-        "'STOP' was NOT echoed by riggers/ground crew. Confirmation required before proceeding.",
-      estimatedCapacityLbs: 0,
-      fallingObject: null,
-      factors: null,
-    }) as SafetyResult;
-  }
-
-  // ── PHASE 2: HARD_STOP CHECKS ─────────────────────────────────────────────
+  // ── Wind ──────────────────────────────────────────────────────────────────
   if (windSpeedMph >= WIND_THRESHOLD_MPH) {
-    return base({
-      status: "HARD_STOP" as const,
-      reasoning:
-        `Wind speed ${windSpeedMph.toFixed(1)} mph is at or above the ${WIND_THRESHOLD_MPH} mph threshold. ` +
-        `No high lifts. Check the machine's manual — its limit may be lower still.`,
-      estimatedCapacityLbs: 0,
-      fallingObject: null,
-      factors: null,
-    }) as SafetyResult;
+    findings.push({
+      severity: "HARD_STOP",
+      title: `Wind ${windSpeedMph.toFixed(1)} mph`,
+      detail:
+        `At or above the ${WIND_THRESHOLD_MPH} mph threshold — no high lifts. ` +
+        `Check the machine's manual; its limit may be lower still.`,
+    });
   }
 
+  // ── Capacity ──────────────────────────────────────────────────────────────
   const groundDerate = GROUND_DERATE[String(groundType).toUpperCase()] ?? 0.7;
   const reachDerate = reachCapacityFactor(reachFt);
   const boomDerate = boomAngleFactor(boomAngleDegrees);
-
   const estimatedCapacityLbs = Math.max(
     ratedCapacityLbs * groundDerate * reachDerate * boomDerate,
     0
   );
-
   const factors = {
     ratedCapacity: ratedCapacityLbs,
     groundDerate,
@@ -277,74 +337,86 @@ export function evaluateSafety(inputs: SafetyInputs): SafetyResult {
   };
 
   if (loadWeightLbs > estimatedCapacityLbs) {
-    return base({
-      status: "HARD_STOP" as const,
-      reasoning:
-        `Load ${loadWeightLbs.toFixed(0)} lb exceeds the estimated ${estimatedCapacityLbs.toFixed(0)} lb ` +
+    findings.push({
+      severity: "HARD_STOP",
+      title: "Load over estimated capacity",
+      detail:
+        `${loadWeightLbs.toFixed(0)} lb requested against an estimated ${estimatedCapacityLbs.toFixed(0)} lb ` +
         `available at ${reachFt.toFixed(0)} ft of reach. Shorten the reach, split the load, or reposition — ` +
         `and confirm against the machine's load chart before any pick.`,
-      estimatedCapacityLbs,
-      fallingObject: null,
-      factors,
-    }) as SafetyResult;
+    });
   }
 
-  // ── PHASE 3: CAUTION CHECKS ───────────────────────────────────────────────
+  // ── Halo zone ─────────────────────────────────────────────────────────────
   if (pushersPresent > 0 && !pushersClearedHaloZone) {
-    return base({
-      status: "CAUTION" as const,
-      reasoning: `Pushers (${pushersPresent}) detected in the 3-ft halo zone. Hold movement until clear.`,
-      estimatedCapacityLbs,
-      fallingObject: null,
-      factors,
-    }) as SafetyResult;
+    findings.push({
+      severity: "CAUTION",
+      title: `${pushersPresent} in the halo zone`,
+      detail: "Pushers inside the 3-ft rear-swing halo. Hold all movement until they are clear.",
+    });
   }
 
+  // ── Fatigue ───────────────────────────────────────────────────────────────
   if (isFatigueElevated(timeOfDayHrs, shiftDurationHrs)) {
-    return base({
-      status: "CAUTION" as const,
-      reasoning:
-        `${shiftDurationHrs.toFixed(0)} h into the shift at ${String(Math.floor(timeOfDayHrs)).padStart(2, "0")}:00 — ` +
-        `reaction time and peripheral scanning are degraded. The machine's capacity is unchanged; your margin is not. ` +
-        `Slow every movement and request relief before complex picks.`,
-      estimatedCapacityLbs,
-      fallingObject: null,
-      factors,
-    }) as SafetyResult;
+    findings.push({
+      severity: "CAUTION",
+      title: "Fatigue window",
+      detail:
+        `${shiftDurationHrs.toFixed(0)} h into the shift at ` +
+        `${String(Math.floor(timeOfDayHrs)).padStart(2, "0")}:00 — reaction time and peripheral scanning ` +
+        `are degraded. The machine's capacity is unchanged; your margin is not. Slow every movement and ` +
+        `request relief before complex picks.`,
+    });
   }
 
+  // ── Flat boom ─────────────────────────────────────────────────────────────
   if (boomAngleDegrees != null && boomAngleDegrees <= FLAT_BOOM_DEGREES) {
-    return base({
-      status: "CAUTION" as const,
-      reasoning:
-        `Boom at ${boomAngleDegrees.toFixed(0)}° is in the flat range where load charts fall off fastest. ` +
-        `Verify this exact pick on the chart before committing.`,
-      estimatedCapacityLbs,
-      fallingObject: null,
-      factors,
-    }) as SafetyResult;
+    findings.push({
+      severity: "CAUTION",
+      title: `Boom flat at ${boomAngleDegrees.toFixed(0)}°`,
+      detail:
+        "In the range where load charts fall off fastest. Verify this exact pick on the chart before committing.",
+    });
   }
 
-  if (pushersPresent > 0) {
-    return base({
-      status: "CAUTION" as const,
-      reasoning: `Ground crew (${pushersPresent}) on load. Maintain slow speed and keep the halo clear.`,
-      estimatedCapacityLbs,
-      fallingObject: null,
-      factors,
-    }) as SafetyResult;
+  // ── Crew on the load ──────────────────────────────────────────────────────
+  // Deliberately NOT a CAUTION. Pushers are present on essentially every real
+  // load-out, so flagging their mere presence made GO nearly unreachable and
+  // manufactured alarm fatigue (audit finding F-15). It is a standing condition
+  // to work within, not an exception — only an uncleared halo is a CAUTION.
+  if (pushersPresent > 0 && pushersClearedHaloZone) {
+    findings.push({
+      severity: "GO",
+      title: `${pushersPresent} on the load`,
+      detail: "Halo clear. Maintain slow speed and keep watching the ground crew.",
+    });
   }
 
-  // ── PHASE 4: GO ───────────────────────────────────────────────────────────
-  return base({
-    status: "GO" as const,
-    reasoning:
-      "Checks passed on the values entered. Confirm the pick against the machine's load chart, " +
-      "maintain Up-Look protocol and keep 'STOP' readiness.",
-    estimatedCapacityLbs,
-    fallingObject: null,
+  findings.sort((a, b) => SEVERITY_RANK[b.severity] - SEVERITY_RANK[a.severity]);
+
+  const blocking = findings.filter((f) => f.severity !== "GO");
+  const status: SafetyStatus = blocking.length ? blocking[0].severity : "GO";
+
+  const reasoning =
+    status === "GO"
+      ? "Checks passed on the values entered. Confirm the pick against the machine's load chart, " +
+        "maintain Up-Look protocol and keep 'STOP' readiness."
+      : blocking.length === 1
+        ? blocking[0].detail
+        : `${blocking.length} issues found — most severe first. ${blocking[0].detail}`;
+
+  // Capacity is meaningless once the pick is locked out.
+  const reportedCapacity = status === "BLOCKER" ? 0 : estimatedCapacityLbs;
+
+  return {
+    status,
+    reasoning,
+    findings,
+    estimatedCapacityLbs: reportedCapacity,
+    fallingObject,
     factors,
-  }) as SafetyResult;
+    advisory: true,
+  };
 }
 
 /** Visual + semantic metadata for each status — consumed across the UI. */
