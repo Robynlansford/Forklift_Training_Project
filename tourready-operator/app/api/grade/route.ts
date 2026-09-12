@@ -69,8 +69,12 @@ Respond with ONLY a raw JSON object, no markdown, no code fences:
       technique: body.technique,
       source: "ai",
     });
-  } catch {
+  } catch (err) {
     // Any AI/parse failure → tell client to fall back to its offline verdict.
+    // Log the real cause: swallowing it made a bad model id undiagnosable from
+    // the response, which cost a deploy cycle to find. Visible in `wrangler tail`.
+    const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    console.error(`[grade] AI grading failed (model=${ANTHROPIC_MODEL}): ${detail}`);
     return NextResponse.json({ error: "AI grading failed" }, { status: 502 });
   }
 }

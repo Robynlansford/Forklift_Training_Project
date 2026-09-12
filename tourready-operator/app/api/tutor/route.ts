@@ -122,8 +122,13 @@ RULES OF VOICE:
     });
     const text = msg.content.map((c) => (c.type === "text" ? c.text : "")).join("");
     return NextResponse.json({ reply: text, source: "ai" });
-  } catch {
+  } catch (err) {
     // Live call failed (bad key, rate limit, network) → fall back to offline.
+    // Logged rather than swallowed: this path degrades silently to the offline
+    // tutor, so without a log a broken model id or key looks like normal
+    // operation. Visible in `wrangler tail`.
+    const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    console.error(`[tutor] live call failed (model=${ANTHROPIC_MODEL}): ${detail}`);
     return NextResponse.json({
       reply: offlineTutorReply(body.messages, body.moduleSlug),
       source: "offline",
