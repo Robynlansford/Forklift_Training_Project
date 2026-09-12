@@ -291,8 +291,13 @@ export function ScrollIntro() {
             />
           </div>
 
-          <p className="max-w-xs text-center text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-            Every scene loads before you scroll — no half-loaded clips mid-scrub.
+          {/* The loading screen is the first thing anyone reads, so it says what
+              the course is — not how the preloader works. */}
+          <p className="max-w-sm text-center text-xs uppercase leading-relaxed tracking-[0.18em] text-[var(--color-muted)]">
+            Forklift &amp; telehandler training for concert and festival load-ins
+          </p>
+          <p className="-mt-4 max-w-lg text-balance text-center text-[11px] leading-relaxed tracking-[0.1em] text-[var(--color-muted)]/70">
+            15 modules · 143 scenarios · the hazards warehouse training never covers
           </p>
         </div>
       )}
