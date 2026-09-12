@@ -1,6 +1,8 @@
 # TourReady Operator — User & Admin Guide
 
-A comprehensive guide to using and managing the TourReady Operator training platform.
+How to run and use the TourReady Operator training platform. For what the product is and who a business buyer is, start with [README.md](README.md).
+
+The web app lives in `tourready-operator/` and serves **http://localhost:3000** (`npm run dev` or `npm run start`). Windows `go-live.bat` uses the same port.
 
 ---
 
@@ -23,11 +25,12 @@ A comprehensive guide to using and managing the TourReady Operator training plat
 **TourReady Operator** is an AI-powered certification training platform for forklift and telehandler operators working in concert and festival production environments.
 
 ### Key Features:
-- **15 training modules** covering OSHA rules, safety signals, rigging, fatigue management, and real-world hazards
-- **139 scenario-based test questions** — you make decisions like you're on the floor at 2:00 AM
-- **AI Safety Tutor** — an AI instructor who grades your answers and explains techniques
-- **Offline-capable** — everything runs locally, no internet required during training
-- **Certification records** — save your progress as a PDF-like operator record
+- **15 modules (including the capstone)** covering OSHA baselines, spotter signals, truck pack, rigging, fatigue, and show-site hazards
+- **139 free-text field scenarios** — you type a decision the way you would call it on the floor
+- **Safety Engine** — live derating simulator (ground, wind, reach, fatigue), not a multiple-choice quiz
+- **AI Safety Tutor** — optional conversational instructor (works offline without a key; richer with `ANTHROPIC_API_KEY`)
+- **Offline-capable** — grading and the safety engine run locally
+- **Certification** — a printable credential after every module is passed; progress export/import from the Training Hub
 
 ---
 
@@ -41,17 +44,13 @@ On Windows:
 
 ### Step 2: Navigate to the Project Folder
 
-In the terminal, type:
+In the terminal, `cd` into this repo's `tourready-operator` folder. On Windows that is often something like:
+
 ```
-cd E:\Forklift_Training_Project\tourready-operator
+cd C:\AI_Projects\Web_Design\Forklift_Training_Project\tourready-operator
 ```
 
-Press Enter.
-
-You should see:
-```
-E:\Forklift_Training_Project\tourready-operator>
-```
+Use the path where you cloned or copied the project.
 
 ### Step 3: Start the Development Server
 
@@ -72,7 +71,7 @@ This means the server is running and ready. **Leave this terminal window open** 
 
 ### Step 4: You're Done
 
-The website is now running on your computer at: **http://localhost:47283**
+The website is now running on your computer at: **http://localhost:3000**
 
 ---
 
@@ -82,19 +81,14 @@ The website is now running on your computer at: **http://localhost:47283**
 
 Open any web browser (Chrome, Firefox, Edge, etc.) and go to:
 ```
-http://localhost:47283
+http://localhost:3000
 ```
 
-You should see the TourReady Operator home page with the hero headline and training modules.
+You should see the TourReady Operator home page. The cinematic load-out film may take a moment to preload; use **Skip film** if you want to jump straight to the hero.
 
 ### On Another Computer (Same Wi-Fi Network)
 
-If someone else is on your Wi-Fi, they can access your server at:
-```
-http://192.168.0.91:47283
-```
-
-(This only works while your dev server is running.)
+If someone else is on your LAN, they can use your machine's local IP on port 3000, for example `http://<your-lan-ip>:3000`. This only works while the server is running and the firewall allows it. Do not hard-code a demo IP into docs.
 
 ---
 
@@ -121,21 +115,16 @@ Press Enter and wait for the installation to finish. You should see: `Successful
 
 In the same terminal, type:
 ```
-cloudflared tunnel --url http://localhost:47283
+cloudflared tunnel --url http://localhost:3000
 ```
 
-Press Enter and wait 5 seconds.
+Press Enter and wait a few seconds. Cloudflare prints a one-time `https://*.trycloudflare.com` URL.
 
-You should see output like:
-```
-|  https://roughly-additions-lounge-covers.trycloudflare.com  |
-```
-
-This is your **public URL** — anyone with this link can access your site.
+This is your **public URL** — anyone with this link can access your site for the life of that process. The hostname is ephemeral; do not commit it.
 
 ### Step 3: Share the Link
 
-Copy the URL (e.g., `https://roughly-additions-lounge-covers.trycloudflare.com`) and share it with your team. They can open it in any browser, anywhere in the world.
+Copy the printed URL and share it with your team. They can open it in any browser.
 
 ### Step 4: Keep Both Windows Open
 
@@ -164,7 +153,7 @@ When you first visit, you see:
 - A large headline: **"Master the Concert/Event Production Forklift Training Program"**
 - Six hazard cards describing real production challenges (wind effects, rigging zones, fatigue, etc.)
 - A "How it Works" section explaining the four-step training loop
-- Two green buttons: **"Enter the Training Hub"** and **"Open Safety Engine"**
+- Two orange / secondary buttons: **"Enter the Training Hub"** and **"Open Safety Engine"**
 
 ### The Navigation Menu (Top of Every Page)
 
@@ -220,27 +209,26 @@ gives you better visibility of the ground. Never travel high."
 **How to get there:** Click **"Open Safety Engine"** or select it from the menu.
 
 **What it is:**
-An interactive decision-making simulator. You respond to real-time scenarios as if you're on a concert floor at 2:00 AM.
+A live derating calculator. You set lift conditions (load, ground type, wind, reach, shift length, rigging-zone clearance, STOP echo, pushers) and the engine returns GO / CAUTION / HARD STOP / BLOCKER with reasoning.
 
 **How it works:**
-1. A scenario loads (e.g., "Wind is gusting to 17 mph and you're about to raise a 10,000 lb LED wall")
-2. You see multiple-choice options or a text prompt
-3. You make a decision
-4. The system grades you and explains consequences
+1. Pick a tour preset (Clear Daytime Pick, 2:00 AM LED Wall, Rigging Zone Hot, Festival Mud, Pushers In Halo) or edit the fields
+2. Watch the verdict, derated capacity, and falling-object impact update immediately
+3. No quiz and no multiple choice — this is the same `TelehandlerSafetyEngine` used elsewhere in the platform
 
 **Why it's different from Training Hub:**
-- Training Hub is guided learning with detailed feedback
-- Safety Engine is a stress test — you respond quickly without hints
+- Training Hub is guided reading plus free-text scenario drills
+- Safety Engine is a what-if tool for a specific pick
 
 ### 3. Knowledge Base (Resources)
 
 **How to get there:** Click **"Knowledge Base"** in the menu.
 
 **What you see:**
-- A searchable library of all 15 modules
-- Glossary of terms (e.g., "Center of Gravity," "Spotter")
-- List of all 25+ named techniques with one-line definitions
-- Quick reference for OSHA rules and hand signals
+- A printable Quick-Reference Rule Card (daily reminders, commands, wind/fatigue rules, stop-work phrases)
+- A searchable glossary of every named technique in the curriculum
+- Category chips to filter (legal, signals, physics, rigging, human factors, …)
+- Each card links to the module that teaches that technique
 
 **How to use it:**
 - Type a keyword in the search box (e.g., "wind," "rigging," "fatigue")
@@ -252,18 +240,15 @@ An interactive decision-making simulator. You respond to real-time scenarios as 
 **How to get there:** Click **"Certification"** in the menu.
 
 **What you see:**
-- A progress dashboard showing:
-  - Which modules you've passed
-  - Your overall completion %
-  - Your operator name and certification date
-- A **"Download Certification"** button
+- Module-by-module progress (not started / retry / passed)
+- Recommended review for any failed techniques
+- A locked state until **every** module is passed
+- After you certify: name on credential, Download PNG, and Print / Save as PDF
 
-**How to save your record:**
-1. Complete at least one module (pass 60% of scenarios)
-2. Go to Certification page
-3. Click **"Download Certification"**
-4. Your browser saves a record with your name, date, and completed modules
-5. You can print or email this record
+**How to save a progress record before you certify:**
+1. Enter an operator name on the Training Hub
+2. Use **Save Record** / **Export** on the Training Hub (JSON)
+3. The certificate page itself stays locked until the full curriculum is passed
 
 ---
 
@@ -274,10 +259,7 @@ An interactive decision-making simulator. You respond to real-time scenarios as 
 - Your browser remembers which modules you've passed, your scores, and the date you started
 
 ### Manual Export
-To back up your progress or print a certificate:
-1. Go to **Certification** page
-2. Click **"Download Certification"**
-3. Your browser downloads a PDF-like file with your name, completion date, and module list
+To back up progress before you certify, use **Export** on the Training Hub. To print a credential, pass every module, then use **Download PNG** or **Print / Save as PDF** on the Certification page.
 
 ### Important
 - Progress is saved **per browser, per device**
@@ -303,7 +285,7 @@ The website is now offline locally. Public links (if you started a tunnel) also 
 2. Press `Ctrl + C`
 3. The terminal will close
 
-The public URL (the `https://...trycloudflare.com` link) no longer works, but your local server (if still running) continues to serve `http://localhost:47283`.
+The public URL (the `https://...trycloudflare.com` link) no longer works, but your local server (if still running) continues to serve `http://localhost:3000`.
 
 ### To Stop Everything
 
@@ -317,7 +299,7 @@ The public URL (the `https://...trycloudflare.com` link) no longer works, but yo
 
 ### Problem: "Address already in use" Error
 
-**Cause:** Something is already running on port 47283.
+**Cause:** Something is already running on port 3000.
 
 **Fix:**
 1. Find any other terminal running `npm run dev`
@@ -343,7 +325,7 @@ The public URL (the `https://...trycloudflare.com` link) no longer works, but yo
 2. Open a new terminal
 3. Type `cloudflared --version` to test
 4. If not found, reinstall: `winget install --id Cloudflare.cloudflared -e --accept-source-agreements --accept-package-agreements`
-5. Open a new terminal and try `cloudflared tunnel --url http://localhost:47283` again
+5. Open a new terminal and try `cloudflared tunnel --url http://localhost:3000` again
 
 ### Problem: Tunnel Link Shows "Error 1000: DNS Query REFUSED"
 
@@ -352,7 +334,7 @@ The public URL (the `https://...trycloudflare.com` link) no longer works, but yo
 **Fix:**
 1. Stop the tunnel (`Ctrl + C`)
 2. Wait 10 seconds
-3. Start it again: `cloudflared tunnel --url http://localhost:47283`
+3. Start it again: `cloudflared tunnel --url http://localhost:3000`
 4. Use the new URL provided
 
 ### Problem: My Progress Disappeared
@@ -382,7 +364,7 @@ The public URL (the `https://...trycloudflare.com` link) no longer works, but yo
 1. Double-check the URL — it should start with `https://` (not `http://`)
 2. Make sure both terminals (dev server + tunnel) are still running
 3. Try accessing from a different phone or browser
-4. If on the same Wi-Fi, try the local URL instead: `http://192.168.0.91:47283`
+4. If on the same Wi-Fi, try `http://<your-lan-ip>:3000` instead of the tunnel URL
 
 ---
 
@@ -390,12 +372,12 @@ The public URL (the `https://...trycloudflare.com` link) no longer works, but yo
 
 | Task | Command | Where |
 |------|---------|-------|
-| Start the website (local) | `npm run dev` | Terminal in `E:\Forklift_Training_Project\tourready-operator` |
-| Access locally | Open `http://localhost:47283` | Web browser |
-| Make it public | `cloudflared tunnel --url http://localhost:47283` | New terminal window |
+| Start the website (local) | `npm run dev` | Terminal in `tourready-operator/` |
+| Access locally | Open `http://localhost:3000` | Web browser |
+| Make it public | `cloudflared tunnel --url http://localhost:3000` | New terminal window |
 | Stop everything | `Ctrl + C` in both terminals | Both terminal windows |
-| Save certification | Go to Certification → Download Certification | Website |
-| Reset progress | Clear browser cache | Browser settings |
+| Save certification | Pass all modules → Certification → Download PNG / Print | Website |
+| Reset progress | Training Hub → Reset, or clear this site's data | Website / browser |
 
 ---
 

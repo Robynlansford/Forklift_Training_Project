@@ -22,6 +22,26 @@ import { Button } from "@/components/ui/button";
 import { TiltCard } from "@/components/tilt-card";
 import { ScrollIntro } from "@/components/scroll-intro";
 import { MODULES, TOTAL_SCENARIOS } from "@/lib/curriculum";
+import { TECHNIQUES } from "@/lib/glossary";
+
+const BUYERS = [
+  {
+    title: "Touring production companies",
+    body: "Brief telehandler and forklift operators before an arena or stadium load-in — the same Stop-Work language, every city.",
+  },
+  {
+    title: "Festival and outdoor producers",
+    body: "Train for soft ground, wind, temporary decks, and night work that a warehouse course never mentions.",
+  },
+  {
+    title: "Labor and crew companies",
+    body: "Give supplied operators a consistent, concert-specific briefing before they step on someone else's site.",
+  },
+  {
+    title: "Venues, arenas, and trainers",
+    body: "Add a live-event layer on top of OSHA PIT instruction. The employer still certifies after hands-on evaluation.",
+  },
+];
 
 const HAZARDS = [
   { icon: Wind, title: "Wind & Sail Effect", body: "LED walls and fabric sails turn a 15 mph breeze into tip-over force. Learn the derating math before the boom goes up." },
@@ -227,12 +247,15 @@ export default function Landing() {
     // hazard/step/CTA cards) render over this regardless; only genuinely bare
     // marketing copy (Hazards intro, "How it works" heading) needed an
     // explicit --color-canvas-ink override to read against it.
-    <div className="bg-[var(--color-page-bg)]">
+    <div className="overflow-x-hidden bg-[var(--color-page-bg)]">
       {/* ── The Load-Out — scroll-scrubbed cinematic intro ──── */}
       <ScrollIntro />
 
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-[var(--color-border)]/50 bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-bg-deep)]">
+      <section
+        id="hero"
+        className="relative overflow-hidden border-b border-[var(--color-border)]/50 bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-bg-deep)]"
+      >
         {/* Lighting rig */}
         <div aria-hidden className="truss">
           {FIXTURES.map((f, i) => (
@@ -346,9 +369,9 @@ export default function Landing() {
               className="mt-14 flex flex-wrap gap-x-12 gap-y-6"
             >
               {[
-                { k: `${MODULES.length}`, v: "Modules + Capstone" },
+                { k: `${MODULES.length}`, v: "Modules incl. capstone" },
                 { k: `${TOTAL_SCENARIOS}`, v: "Field scenarios" },
-                { k: "25+", v: "Named techniques" },
+                { k: `${TECHNIQUES.length}`, v: "Named techniques" },
                 { k: "100%", v: "Offline-capable" },
               ].map((s, i) => (
                 <StatGauge key={s.v} value={s.k} label={s.v} delay={i * 0.12} />
@@ -403,7 +426,7 @@ export default function Landing() {
             <h2 className="type-display mt-3 text-4xl text-[var(--color-canvas-ink)] sm:text-5xl">
               The hazards warehouse training never covers
             </h2>
-            <p className="mt-4 text-[var(--color-muted)]">
+            <p className="mt-4 text-[var(--color-canvas-muted)]">
               Concert gear doesn&apos;t behave like pallets. Every module is built around the real
               failure modes of live-event production.
             </p>
@@ -479,7 +502,7 @@ export default function Landing() {
         <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
           <Eyebrow>The training loop</Eyebrow>
           <h2 className="type-display mt-3 text-4xl text-[var(--color-canvas-ink)] sm:text-5xl">How it works</h2>
-          <p className="mt-4 max-w-xl text-[var(--color-muted)]">
+          <p className="mt-4 max-w-xl text-[var(--color-canvas-muted)]">
             A deliberate-practice loop modeled on how operators actually build judgment.
           </p>
           <div className="relative mt-12 grid gap-4 md:grid-cols-4">
@@ -505,6 +528,34 @@ export default function Landing() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Who it's for ─────────────────────────────────────── */}
+      <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+        <Eyebrow>Built for production businesses</Eyebrow>
+        <h2 className="type-display mt-3 text-4xl text-[var(--color-canvas-ink)] sm:text-5xl">
+          Who this is for
+        </h2>
+        <p className="mt-4 max-w-2xl text-[var(--color-canvas-muted)]">
+          TourReady Operator is a training tool for businesses that put powered industrial trucks
+          on a show site — not a retail shop, and not a warehouse-only course.
+        </p>
+        <div className="mt-12 grid gap-4 sm:grid-cols-2">
+          {BUYERS.map((b) => (
+            <div
+              key={b.title}
+              className="rounded-[var(--radius-card)] border border-[var(--color-canvas-ink)]/12 bg-white p-6 shadow-[0_8px_24px_-16px_rgba(28,20,16,0.35)]"
+            >
+              <span aria-hidden className="mb-3 block h-1 w-8 rounded-sm bg-[var(--color-accent)]" />
+              <h3 className="text-base font-bold tracking-tight text-[var(--color-canvas-ink)]">
+                {b.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--color-canvas-muted)]">
+                {b.body}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 

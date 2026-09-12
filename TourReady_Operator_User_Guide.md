@@ -90,10 +90,12 @@ When the website opens, the first page you see is the **Home Page** (also called
   - **"Open Safety Engine"** (darker button) — click this to go to the simulator
 
 **Four stats below the buttons:**
-- How many Modules there are (8 modules + 1 capstone final test)
-- How many Field Scenarios (practice questions)
-- How many Named Techniques (special skills with official names)
+- How many modules there are (15 including the capstone)
+- How many field scenarios (practice questions)
+- How many named techniques (special skills with official names)
 - "100% Offline-capable" — works without internet
+
+A cinematic load-out film may play first. Use **Skip film** if you want to jump straight to the hero.
 
 **A red warning bar** below the stats that says: *"STOP" is the one command that overrides everything — issued loud, echoed by the crew, and never argued.* This is one of the most important safety rules — more on this later!
 
@@ -470,7 +472,7 @@ Below the Rule Card is the full library of named techniques. Each technique has 
 - **A summary** — what the technique is and when you use it
 - **A rule statement** — the exact rule to follow, shown with an orange left border
 
-**There are 25+ techniques in total.**
+**There are 47 named techniques in the glossary.**
 
 ### Searching for Techniques:
 

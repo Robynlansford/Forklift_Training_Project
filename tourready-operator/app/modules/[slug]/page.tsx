@@ -116,27 +116,27 @@ export default function ModulePage() {
       </div>
 
       {/* Prev / Next */}
-      <nav className="mt-12 flex items-center justify-between gap-4 border-t border-[var(--color-border)]/60 pt-8">
+      <nav className="mt-12 flex flex-col gap-3 border-t border-[var(--color-border)]/60 pt-8 sm:flex-row sm:items-center sm:justify-between">
         {prev ? (
-          <Link href={`/modules/${prev.slug}`} className="group min-w-0">
-            <Button variant="secondary" className="max-w-full">
+          <Link href={`/modules/${prev.slug}`} className="group min-w-0 sm:max-w-[48%]">
+            <Button variant="secondary" className="w-full max-w-full sm:w-auto">
               <ArrowLeft className="h-4 w-4 flex-shrink-0" />
               <span className="truncate">{prev.title}</span>
             </Button>
           </Link>
         ) : (
-          <span />
+          <span className="hidden sm:block" />
         )}
         {next ? (
-          <Link href={`/modules/${next.slug}`} className="group min-w-0">
-            <Button variant="primary" className="max-w-full">
+          <Link href={`/modules/${next.slug}`} className="group min-w-0 sm:max-w-[48%]">
+            <Button variant="primary" className="w-full max-w-full sm:w-auto">
               <span className="truncate">{next.title}</span>
               <ArrowRight className="h-4 w-4 flex-shrink-0" />
             </Button>
           </Link>
         ) : (
-          <Link href="/certificate">
-            <Button variant="primary">
+          <Link href="/certificate" className="w-full sm:w-auto">
+            <Button variant="primary" className="w-full sm:w-auto">
               Get Certified <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
