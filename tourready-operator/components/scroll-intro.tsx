@@ -2,6 +2,7 @@
 
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
+import { MODULES, TOTAL_SCENARIOS } from "@/lib/curriculum";
 
 declare global {
   interface Window {
@@ -347,7 +348,8 @@ export function ScrollIntro() {
             Forklift &amp; telehandler training for concert and festival load-ins
           </p>
           <p className="-mt-4 max-w-lg text-balance text-center text-[11px] leading-relaxed tracking-[0.1em] text-[var(--color-muted)]/70">
-            15 modules · 143 scenarios · the hazards warehouse training never covers
+            {MODULES.length} modules · {TOTAL_SCENARIOS} scenarios · the hazards warehouse training
+            never covers
           </p>
 
           <button
