@@ -1,0 +1,19 @@
+# Cloudflare Workers static-asset headers.
+#
+# next.config.mjs also declares a headers() rule for /scroll-intro/*, but that
+# never fires here: OpenNext copies public/ into .open-next/assets, and the
+# Workers asset binding serves those files directly without going through Next.
+# Verified on the deployed origin — the clips came back with the Workers default
+# `public, max-age=0, must-revalidate` rather than the immutable rule.
+#
+# This file is the mechanism that does apply. The scroll-film clips and posters
+# are content-stable: their byte sizes are hardcoded as load-progress constants
+# in components/scroll-intro.tsx, so any re-encode is necessarily accompanied by
+# a code change. Cache them for a year so a returning visitor never sits through
+# the 9 MB load gate twice.
+
+/scroll-intro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
