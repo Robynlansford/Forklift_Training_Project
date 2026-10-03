@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { LivingScene } from "@/components/living/living-scene";
 
 const CATEGORIES = [
   "All",
@@ -32,9 +33,31 @@ export default function ResourcesPage() {
     });
   }, [query, category]);
 
+  // Constellation hero: one star per technique, clustered by the glossary's categories,
+  // following this page's own filter and search.
+  const constellation = useMemo(
+    () => ({
+      items: TECHNIQUES.map((t) => ({ c: t.category })),
+      categories: CATEGORIES.filter((c) => c !== "All").map((c) => ({
+        name: c,
+        count: TECHNIQUES.filter((t) => t.category === c).length,
+      })),
+      active: category,
+      matches: query.trim() ? filtered.map((t) => TECHNIQUES.indexOf(t)) : null,
+    }),
+    [category, query, filtered]
+  );
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+      <LivingScene
+        name="constellation"
+        needs="kit.js"
+        data={constellation}
+        tag={`Schematic · ${TECHNIQUES.length} techniques`}
+        className="lp-band"
+      >
+      <div className="relative flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div className="max-w-2xl">
           <h1 className="type-display text-4xl sm:text-5xl">Knowledge Base</h1>
           <p className="mt-2 text-[var(--color-muted)]">
@@ -46,6 +69,7 @@ export default function ResourcesPage() {
           <Printer className="h-4 w-4" /> Print Rule Card
         </Button>
       </div>
+      </LivingScene>
 
       {/* Quick Reference Rule Card */}
       <section className="mt-8">
@@ -197,7 +221,7 @@ function TechniqueCardView({ t, index }: { t: TechniqueCard; index: number }) {
       transition={{ duration: 0.3, delay: Math.min(index * 0.03, 0.3) }}
     >
       <Link href={`/modules/${t.moduleSlug}`} className="group block h-full">
-        <Card className="flex h-full flex-col p-5 transition-colors group-hover:border-[var(--color-accent)]/50">
+        <Card className="lp-light flex h-full flex-col p-5 transition-colors group-hover:border-[var(--color-accent)]/50">
           <div className="mb-2 flex items-start justify-between gap-2">
             <h3 className="text-[15px] font-bold leading-snug tracking-tight">{t.name}</h3>
             <ArrowUpRight className="h-4 w-4 flex-shrink-0 text-[var(--color-muted)] transition-colors group-hover:text-[var(--color-accent)]" />

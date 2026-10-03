@@ -1,0 +1,148 @@
+[
+  {
+    "path": "/",
+    "fcp": 412,
+    "lcp": 760,
+    "scrollableAt": null,
+    "requests": 43,
+    "totalKB": 1034,
+    "jsKB": 303,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "/living/posters/loadout-wide.webp?v=1",
+      "KB": 74
+    },
+    "errors": [],
+    "wallMs": 10161
+  },
+  {
+    "path": "/dashboard",
+    "fcp": 268,
+    "lcp": 268,
+    "scrollableAt": null,
+    "requests": 54,
+    "totalKB": 1385,
+    "jsKB": 291,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "/_next/image?url=%2Fimages%2Fmodules%2Flegal-baselines.jpg&w=640&q=75",
+      "KB": 63
+    },
+    "errors": [],
+    "wallMs": 10430
+  },
+  {
+    "path": "/modules/basic-controls",
+    "fcp": 292,
+    "lcp": 744,
+    "scrollableAt": null,
+    "requests": 42,
+    "totalKB": 983,
+    "jsKB": 302,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "/_next/image?url=%2Fimages%2Fmodules%2Fbasic-controls.jpg&w=1080&q=75",
+      "KB": 139
+    },
+    "errors": [],
+    "wallMs": 9916
+  },
+  {
+    "path": "/modules/heavy-physics",
+    "fcp": 260,
+    "lcp": 628,
+    "scrollableAt": null,
+    "requests": 42,
+    "totalKB": 907,
+    "jsKB": 302,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "/_next/image?url=%2Fimages%2Fmodules%2Fheavy-physics.jpg&w=1080&q=75",
+      "KB": 65
+    },
+    "errors": [],
+    "wallMs": 9859
+  },
+  {
+    "path": "/modules/capstone",
+    "fcp": 276,
+    "lcp": 612,
+    "scrollableAt": null,
+    "requests": 42,
+    "totalKB": 920,
+    "jsKB": 302,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "/_next/image?url=%2Fimages%2Fmodules%2Fcapstone.jpg&w=1080&q=75",
+      "KB": 79
+    },
+    "errors": [],
+    "wallMs": 9878
+  },
+  {
+    "path": "/simulator",
+    "fcp": 316,
+    "lcp": 668,
+    "scrollableAt": null,
+    "requests": 41,
+    "totalKB": 947,
+    "jsKB": 304,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E",
+      "KB": 0
+    },
+    "errors": [],
+    "wallMs": 9980
+  },
+  {
+    "path": "/resources",
+    "fcp": 256,
+    "lcp": 256,
+    "scrollableAt": null,
+    "requests": 40,
+    "totalKB": 945,
+    "jsKB": 291,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E",
+      "KB": 0
+    },
+    "errors": [],
+    "wallMs": 9907
+  },
+  {
+    "path": "/certificate",
+    "fcp": 268,
+    "lcp": 268,
+    "scrollableAt": null,
+    "requests": 40,
+    "totalKB": 808,
+    "jsKB": 300,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E",
+      "KB": 0
+    },
+    "errors": [],
+    "wallMs": 9813
+  },
+  {
+    "path": "/this-route-does-not-exist",
+    "fcp": 280,
+    "lcp": 280,
+    "scrollableAt": null,
+    "requests": 38,
+    "totalKB": 688,
+    "jsKB": 290,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E",
+      "KB": 0
+    },
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "wallMs": 9733
+  }
+]

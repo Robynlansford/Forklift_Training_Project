@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- The existing logo glyph from components/logo.tsx (boom/fork mark), on its tile. -->
+  <rect width="32" height="32" rx="7" fill="#1f2937"/>
+  <g transform="translate(4 3)">
+    <path d="M3 20h7v-3H6v-4l9-4 5 2" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="6.5" cy="20.5" r="1.6" fill="#f8fafc"/>
+    <circle cx="11.5" cy="20.5" r="1.6" fill="#f8fafc"/>
+    <path d="M20 11l-2 9" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+  <circle cx="27" cy="5" r="2.5" fill="#f97316"/>
+</svg>

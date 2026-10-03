@@ -1,0 +1,18 @@
+[
+  {
+    "path": "/",
+    "fcp": 248,
+    "lcp": 600,
+    "scrollableAt": null,
+    "requests": 43,
+    "totalKB": 1034,
+    "jsKB": 303,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "/living/posters/loadout-wide.webp?v=1",
+      "KB": 74
+    },
+    "errors": [],
+    "wallMs": 10001
+  }
+]

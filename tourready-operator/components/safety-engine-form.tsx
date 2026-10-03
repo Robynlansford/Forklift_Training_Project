@@ -4,12 +4,16 @@ import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   evaluateSafety,
+  isFatigueElevated,
+  DEFAULT_RATED_CAPACITY_LBS,
   GROUND_DERATE,
   GROUND_LABELS,
   STATUS_META,
   WIND_THRESHOLD_MPH,
   type SafetyInputs,
 } from "@/lib/safety-engine";
+import { LivingScene } from "./living/living-scene";
+import { LivingFx } from "./living/living-fx";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -203,6 +207,35 @@ export function SafetyEngineForm() {
   const result = useMemo(() => evaluateSafety(v), [v]);
   const meta = STATUS_META[result.status];
 
+  // Everything the Living layer draws is the engine's own input or output.
+  const machine = {
+    load: v.loadWeightLbs,
+    ground: v.groundType,
+    wind: v.windSpeedMph,
+    limit: WIND_THRESHOLD_MPH,
+    boom: v.boomAngleDegrees,
+    reach: v.reachFt,
+    riggingClear: v.riggingZoneClear,
+    pushers: v.pushersPresent,
+    pushersClear: v.pushersClearedHaloZone,
+    fatigue: isFatigueElevated(v.timeOfDayHrs, v.shiftDurationHrs),
+    status: result.status,
+  };
+  const capacity = {
+    rated: DEFAULT_RATED_CAPACITY_LBS,
+    maxReach: 30,
+    grounds: Object.keys(GROUND_DERATE).map((k) => ({
+      key: k,
+      label: GROUND_LABELS[k].split(" (")[0],
+      derate: GROUND_DERATE[k],
+    })),
+    ground: String(v.groundType).toUpperCase(),
+    reach: v.reachFt,
+    load: v.loadWeightLbs,
+    boom: v.boomAngleDegrees,
+    verdict: result.status,
+  };
+
   function set<K extends keyof typeof DEFAULTS>(key: K, value: (typeof DEFAULTS)[K]) {
     setV((cur) => ({ ...cur, [key]: value }));
   }
@@ -215,6 +248,16 @@ export function SafetyEngineForm() {
   }
 
   return (
+    <>
+    {/* Data hero: the telehandler posed live from these inputs (Living "machine" scene). */}
+    <LivingScene
+      name="machine"
+      needs="kit.js"
+      data={machine}
+      fade={false}
+      tag="Schematic · not to scale · posed from your inputs"
+      className="lp-machine mb-6"
+    />
     <div className="grid gap-6 lg:grid-cols-[1fr_minmax(340px,400px)]">
       {/* ── Inputs ─────────────────────────────────────────── */}
       <div className="space-y-6">
@@ -537,6 +580,20 @@ export function SafetyEngineForm() {
             )}
           </div>
         </motion.div>
+        <LivingFx
+          name="capacity"
+          data={capacity}
+          tag="Teaching model"
+          aspect="16 / 10"
+          aspectSmall="4 / 3"
+          className="mt-3"
+          caption={
+            <span>
+              Capacity vs. reach on this ground, from the same moment model as the verdict above.
+              Dashed line: the load you entered.
+            </span>
+          }
+        />
         <p className="mt-3 px-1 text-[11px] leading-relaxed text-[var(--color-muted)]">
           <strong className="text-[var(--color-text)]">Teaching model, not a load chart.</strong>{" "}
           Capacity here is a conservative illustration of how reach, ground and boom angle eat into a
@@ -545,6 +602,7 @@ export function SafetyEngineForm() {
         </p>
       </div>
     </div>
+    </>
   );
 }
 

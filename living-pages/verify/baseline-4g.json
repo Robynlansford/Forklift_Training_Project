@@ -1,0 +1,165 @@
+[
+  {
+    "path": "/",
+    "fcp": 276,
+    "lcp": 8576,
+    "scrollableAt": null,
+    "requests": 59,
+    "totalKB": 10259,
+    "jsKB": 277,
+    "mediaKB": 9007,
+    "largestImage": {
+      "url": "/scroll-intro/img/leg1.webp",
+      "KB": 73
+    },
+    "errors": [
+      "pageerror: TypeError: Cannot read properties of null (reading 'style')"
+    ],
+    "wallMs": 10226
+  },
+  {
+    "path": "/dashboard",
+    "fcp": 264,
+    "lcp": 264,
+    "scrollableAt": null,
+    "requests": 52,
+    "totalKB": 1336,
+    "jsKB": 267,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "/_next/image?url=%2Fimages%2Fmodules%2Flegal-baselines.jpg&w=640&q=75",
+      "KB": 63
+    },
+    "errors": [
+      "pageerror: TypeError: Cannot read properties of null (reading 'style')"
+    ],
+    "wallMs": 10234
+  },
+  {
+    "path": "/modules/basic-controls",
+    "fcp": 284,
+    "lcp": 736,
+    "scrollableAt": null,
+    "requests": 38,
+    "totalKB": 954,
+    "jsKB": 277,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "/_next/image?url=%2Fimages%2Fmodules%2Fbasic-controls.jpg&w=1080&q=75",
+      "KB": 139
+    },
+    "errors": [
+      "pageerror: TypeError: Cannot read properties of null (reading 'style')"
+    ],
+    "wallMs": 9924
+  },
+  {
+    "path": "/modules/heavy-physics",
+    "fcp": 268,
+    "lcp": 604,
+    "scrollableAt": null,
+    "requests": 38,
+    "totalKB": 878,
+    "jsKB": 277,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "/_next/image?url=%2Fimages%2Fmodules%2Fheavy-physics.jpg&w=1080&q=75",
+      "KB": 65
+    },
+    "errors": [
+      "pageerror: TypeError: Cannot read properties of null (reading 'style')"
+    ],
+    "wallMs": 9839
+  },
+  {
+    "path": "/modules/capstone",
+    "fcp": 280,
+    "lcp": 612,
+    "scrollableAt": null,
+    "requests": 38,
+    "totalKB": 891,
+    "jsKB": 277,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "/_next/image?url=%2Fimages%2Fmodules%2Fcapstone.jpg&w=1080&q=75",
+      "KB": 79
+    },
+    "errors": [
+      "pageerror: TypeError: Cannot read properties of null (reading 'style')"
+    ],
+    "wallMs": 9862
+  },
+  {
+    "path": "/simulator",
+    "fcp": 312,
+    "lcp": 628,
+    "scrollableAt": null,
+    "requests": 35,
+    "totalKB": 884,
+    "jsKB": 267,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E",
+      "KB": 0
+    },
+    "errors": [
+      "pageerror: TypeError: Cannot read properties of null (reading 'style')"
+    ],
+    "wallMs": 9914
+  },
+  {
+    "path": "/resources",
+    "fcp": 260,
+    "lcp": 260,
+    "scrollableAt": null,
+    "requests": 36,
+    "totalKB": 896,
+    "jsKB": 267,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E",
+      "KB": 0
+    },
+    "errors": [
+      "pageerror: TypeError: Cannot read properties of null (reading 'style')"
+    ],
+    "wallMs": 9880
+  },
+  {
+    "path": "/certificate",
+    "fcp": 320,
+    "lcp": 320,
+    "scrollableAt": null,
+    "requests": 43,
+    "totalKB": 775,
+    "jsKB": 267,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E",
+      "KB": 0
+    },
+    "errors": [
+      "pageerror: TypeError: Cannot read properties of null (reading 'style')"
+    ],
+    "wallMs": 9818
+  },
+  {
+    "path": "/this-route-does-not-exist",
+    "fcp": 280,
+    "lcp": 280,
+    "scrollableAt": null,
+    "requests": 34,
+    "totalKB": 661,
+    "jsKB": 267,
+    "mediaKB": 0,
+    "largestImage": {
+      "url": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E",
+      "KB": 0
+    },
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "pageerror: TypeError: Cannot read properties of null (reading 'style')"
+    ],
+    "wallMs": 9712
+  }
+]

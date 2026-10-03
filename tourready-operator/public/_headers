@@ -17,3 +17,8 @@
 
 /images/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Living Pages engine, scenes and posters. Every URL carries ?v=LIVING_VERSION
+# (components/living/runtime.ts), so a change ships under a new URL.
+/living/*
+  Cache-Control: public, max-age=31536000, immutable

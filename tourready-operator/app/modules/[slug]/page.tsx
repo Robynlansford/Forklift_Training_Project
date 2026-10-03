@@ -13,6 +13,7 @@ import { ModuleContent } from "@/components/module-content";
 import { ScenarioTrainer } from "@/components/scenario-trainer";
 import { StatusPill } from "@/components/status-pill";
 import { Button } from "@/components/ui/button";
+import { LivingScene } from "@/components/living/living-scene";
 
 export default function ModulePage() {
   const params = useParams<{ slug: string }>();
@@ -38,9 +39,17 @@ export default function ModulePage() {
         <ArrowLeft className="h-4 w-4" /> Training Hub
       </Link>
 
-      {/* Hero plate */}
+      {/* Hero plate — the module's own icon is drawn in light over the photo, then
+          breaks into haze (Living "plate" scene; additive light only, photo untouched). */}
       {photo && (
-        <div className="relative mt-6 aspect-[21/9] w-full overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)]/70 bg-[var(--color-surface-2)] sm:aspect-[21/8]">
+        <LivingScene
+          key={module.slug}
+          name="plate"
+          overlay
+          fade={false}
+          className="lp-plate mt-6 aspect-[21/9] w-full overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)]/70 bg-[var(--color-surface-2)] sm:aspect-[21/8]"
+        >
+          <ModuleIcon name={module.icon} lpIcon className="lp-icon-source" />
           <Image
             src={photo.src}
             alt={photo.alt}
@@ -52,7 +61,7 @@ export default function ModulePage() {
           {/* Light bottom vignette only — the title sits below the plate, so nothing
               needs to be legible on top of it. Keep the photo readable. */}
           <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/35 to-transparent" />
-        </div>
+        </LivingScene>
       )}
 
       {/* Header */}
@@ -106,11 +115,11 @@ export default function ModulePage() {
       {/* Trainer */}
       <div className="mt-14">
         <div className="mb-5 flex items-center gap-3">
-          <div className="h-px flex-1 bg-[var(--color-border)]/60" />
+          <div className="lp-divider flex-1" />
           <span className="type-eyebrow text-[var(--color-accent)]">
             Deliberate Practice
           </span>
-          <div className="h-px flex-1 bg-[var(--color-border)]/60" />
+          <div className="lp-divider flex-1" />
         </div>
         <ScenarioTrainer module={module} />
       </div>

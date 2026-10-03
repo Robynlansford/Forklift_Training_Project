@@ -1,0 +1,18 @@
+[
+  {
+    "path": "/",
+    "fcp": 272,
+    "lcp": 8552,
+    "scrollableAt": 8565,
+    "requests": 59,
+    "totalKB": 10259,
+    "jsKB": 277,
+    "mediaKB": 9007,
+    "largestImage": {
+      "url": "/scroll-intro/img/leg1.webp",
+      "KB": 73
+    },
+    "errors": [],
+    "wallMs": 10241
+  }
+]

@@ -1,0 +1,13 @@
+[
+  {
+    "date": "2026-09-29",
+    "macrostructure": "preserved (visual-layer redesign: existing routes + section order unchanged)",
+    "theme": "brand (studied from app/globals.css @theme: bg #0b1120, accent #f97316, Barlow Condensed + Inter)",
+    "enrichment": "Living Pages: WebGL2 pinned scroll film (home), live scene bands (hub, simulator, knowledge base, certificate, module plates, 404), data figures from site numbers",
+    "genre": "atmospheric",
+    "nav": "preserved site chrome (not re-picked)",
+    "footer": "preserved site chrome (not re-picked)",
+    "slop": "Living layer pass: 10, 14, 15, 27, 33, 34, 38a, 40-41 (measured over live scenes), 44, 46, 47, 48, 49, 51, 55, 56. Pre-existing site issues flagged, not changed: 7 (bg-white two-tone home), 10 (transition-all on module-card arrow), 13 (module-card has 4 stacked hover effects)",
+    "brief": "Tour Ready Operator · forklift & telehandler training for concert and festival load-ins"
+  }
+]

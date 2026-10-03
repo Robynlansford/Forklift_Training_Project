@@ -42,10 +42,13 @@ const ICONS: Record<string, LucideIcon> = {
 export function ModuleIcon({
   name,
   className,
+  lpIcon,
 }: {
   name: string;
   className?: string;
+  /** Marks this glyph as the source the Living "plate" scene draws in light. */
+  lpIcon?: boolean;
 }) {
   const Cmp = ICONS[name] ?? Gauge;
-  return <Cmp className={className} aria-hidden="true" />;
+  return <Cmp className={className} aria-hidden="true" {...(lpIcon ? { "data-lp-icon": "" } : {})} />;
 }

@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-[var(--color-accent)] text-black hover:bg-[#fb8a3c] shadow-[0_6px_20px_-8px_rgba(249,115,22,0.6)]",
+          "lp-sweep bg-[var(--color-accent)] text-black hover:bg-[#fb8a3c] shadow-[0_6px_20px_-8px_rgba(249,115,22,0.6)]",
         secondary:
           "bg-[var(--color-surface-2)] text-[var(--color-text)] border border-[var(--color-border)] hover:border-[var(--color-accent)]/60 hover:bg-[#243042]",
         ghost:

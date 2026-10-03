@@ -9,6 +9,7 @@ import {
   useMotionTemplate,
   useReducedMotion,
 } from "framer-motion";
+import { useHydrated } from "@/lib/use-hydrated";
 
 /**
  * Pointer-tracked 3D tilt with a travelling glare sheen.
@@ -25,7 +26,10 @@ export function TiltCard({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
+  // Gate on hydration: the server can't know the motion preference, so the first
+  // client render must match it (a mismatch logged a hydration error under reduced motion).
+  const hydrated = useHydrated();
+  const reduce = useReducedMotion() && hydrated;
 
   const px = useMotionValue(0.5);
   const py = useMotionValue(0.5);

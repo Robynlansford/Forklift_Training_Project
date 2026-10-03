@@ -20,9 +20,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TiltCard } from "@/components/tilt-card";
-import { ScrollIntro } from "@/components/scroll-intro";
+import { LoadOutFilm } from "@/components/living/load-out-film";
+import { LivingScene } from "@/components/living/living-scene";
+import { LivingRoute } from "@/components/living/living-fx";
 import { MODULES, TOTAL_SCENARIOS } from "@/lib/curriculum";
 import { TECHNIQUES } from "@/lib/glossary";
+import { useHydrated } from "@/lib/use-hydrated";
 
 const BUYERS = [
   {
@@ -195,7 +198,9 @@ function StaggerLine({
   delay?: number;
 }) {
   const words = text.split(" ");
-  const reduce = useReducedMotion();
+  // Same hydration-safe gate as TiltCard: identical first render on server and client.
+  const hydrated = useHydrated();
+  const reduce = useReducedMotion() && hydrated;
   if (reduce) return <span className={`inline-block ${className}`}>{text}</span>;
   return (
     <motion.span
@@ -247,9 +252,11 @@ export default function Landing() {
     // hazard/step/CTA cards) render over this regardless; only genuinely bare
     // marketing copy (Hazards intro, "How it works" heading) needed an
     // explicit --color-canvas-ink override to read against it.
-    <div className="overflow-x-hidden bg-[var(--color-page-bg)]">
-      {/* ── The Load-Out — scroll-scrubbed cinematic intro ──── */}
-      <ScrollIntro />
+    // overflow-x: clip (not hidden) — `hidden` makes this div a scroll container,
+    // which would stop the pinned film below from sticking to the viewport.
+    <div className="overflow-x-clip bg-[var(--color-page-bg)]">
+      {/* ── The Load-Out — the signature scroll film, drawn in code ──── */}
+      <LoadOutFilm />
 
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section
@@ -452,7 +459,7 @@ export default function Landing() {
               transition={{ duration: 0.4, delay: i * 0.05 }}
               className="h-full"
             >
-              <TiltCard className="group overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)]/70 bg-[var(--color-surface)] p-6 transition-colors hover:border-[var(--color-accent)]/40">
+              <TiltCard className="lp-light group overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)]/70 bg-[var(--color-surface)] p-6 transition-colors hover:border-[var(--color-accent)]/40">
                 <div
                   aria-hidden
                   className="warn-stripe absolute inset-x-0 top-0 h-1 -translate-y-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
@@ -505,7 +512,8 @@ export default function Landing() {
           <p className="mt-4 max-w-xl text-[var(--color-canvas-muted)]">
             A deliberate-practice loop modeled on how operators actually build judgment.
           </p>
-          <div className="relative mt-12 grid gap-4 md:grid-cols-4">
+          {/* Scroll-lit route: the load path fills and each step lights as it passes the reading line. */}
+          <LivingRoute className="lp-route--grid relative mt-12 grid gap-4 md:grid-cols-4">
             <div
               aria-hidden
               className="load-path absolute left-0 right-0 top-[3.15rem] hidden h-0.5 md:block"
@@ -517,9 +525,13 @@ export default function Landing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.08 }}
-                className="group relative rounded-[var(--radius-card)] border border-[var(--color-border)]/70 bg-[var(--color-bg)] p-6 transition-colors hover:border-[var(--color-accent)]/40"
+                data-route-item=""
+                className="lp-light group relative rounded-[var(--radius-card)] border border-[var(--color-border)]/70 bg-[var(--color-bg)] p-6 transition-colors hover:border-[var(--color-accent)]/40"
               >
-                <span className="type-display relative z-10 inline-flex h-8 items-center rounded-full bg-[var(--color-surface)] px-3 text-base text-[var(--color-accent)] ring-1 ring-[var(--color-border)] transition-all group-hover:ring-[var(--color-accent)]/50 group-hover:shadow-[0_0_16px_-4px_var(--color-accent)]">
+                <span
+                  data-route-chip=""
+                  className="type-display relative z-10 inline-flex h-8 items-center rounded-full bg-[var(--color-surface)] px-3 text-base text-[var(--color-accent)] ring-1 ring-[var(--color-border)] transition-all group-hover:ring-[var(--color-accent)]/50 group-hover:shadow-[0_0_16px_-4px_var(--color-accent)]"
+                >
                   {s.n}
                 </span>
                 <s.icon className="mt-3 h-6 w-6 text-[var(--color-text)] transition-colors group-hover:text-[var(--color-accent)]" />
@@ -527,7 +539,7 @@ export default function Landing() {
                 <p className="mt-2 text-sm leading-relaxed text-[var(--color-muted)]">{s.body}</p>
               </motion.div>
             ))}
-          </div>
+          </LivingRoute>
         </div>
       </section>
 
@@ -545,7 +557,7 @@ export default function Landing() {
           {BUYERS.map((b) => (
             <div
               key={b.title}
-              className="rounded-[var(--radius-card)] border border-[var(--color-canvas-ink)]/12 bg-white p-6 shadow-[0_8px_24px_-16px_rgba(28,20,16,0.35)]"
+              className="lp-light rounded-[var(--radius-card)] border border-[var(--color-canvas-ink)]/12 bg-white p-6 shadow-[0_8px_24px_-16px_rgba(28,20,16,0.35)]"
             >
               <span aria-hidden className="mb-3 block h-1 w-8 rounded-sm bg-[var(--color-accent)]" />
               <h3 className="text-base font-bold tracking-tight text-[var(--color-canvas-ink)]">
@@ -566,7 +578,11 @@ export default function Landing() {
           <div aria-hidden className="beacon-sweep" style={{ opacity: 0.5 }} />
           <div aria-hidden className="floor-3d opacity-60" />
           <div className="hazard-tape absolute inset-x-0 top-0" aria-hidden />
-          <div className="relative max-w-2xl">
+          {/* Glass STOP octagon — the one command that overrides everything, as an object. */}
+          <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[44%] sm:block" aria-hidden="true">
+            <LivingScene name="stopglass" className="h-full w-full" fade={false} />
+          </div>
+          <div className="relative max-w-2xl sm:max-w-[55%]">
             <h2 className="type-display text-4xl sm:text-6xl">
               Be the operator who calls{" "}
               <span className="text-hot">STOP</span> when it counts.

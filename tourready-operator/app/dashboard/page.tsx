@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/toast";
+import { LivingScene } from "@/components/living/living-scene";
 
 export default function Dashboard() {
   const hydrated = useHydrated();
@@ -136,10 +137,24 @@ export default function Dashboard() {
     e.target.value = "";
   }
 
+  // The Run Sheet hero draws the visitor's own saved progress — nothing invented.
+  const runSheet = {
+    statuses: hydrated ? MODULES.map((m) => moduleStatus(m, scores)) : [],
+    next: MODULES.indexOf(nextModule),
+    certified: hydrated && overall.certified,
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+      {/* Header — over the Run Sheet: one lit station per module */}
+      <LivingScene
+        name="runsheet"
+        needs="kit.js"
+        data={runSheet}
+        tag="Schematic · your saved progress"
+        className="lp-band"
+      >
+      <div className="relative flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <h1 className="type-display text-4xl sm:text-5xl">Training Hub</h1>
           <p className="mt-1.5 text-[var(--color-muted)]">
@@ -186,6 +201,7 @@ export default function Dashboard() {
           </Button>
         </div>
       </div>
+      </LivingScene>
 
       {/* Status + Quick actions */}
       <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
@@ -298,7 +314,7 @@ function QuickAction({
   return (
     <Link href={href} className="group">
       <motion.div whileHover={{ y: -3 }} className="h-full">
-        <Card className="flex h-full flex-col p-5 transition-colors group-hover:border-[var(--color-accent)]/50">
+        <Card className="lp-light flex h-full flex-col p-5 transition-colors group-hover:border-[var(--color-accent)]/50">
           <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-accent-soft)] ring-1 ring-[var(--color-accent)]/30">
             <Icon className="h-5 w-5 text-[var(--color-accent)]" />
           </div>

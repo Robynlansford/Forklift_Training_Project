@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { Octagon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LivingScene } from "@/components/living/living-scene";
 
 export default function NotFound() {
   return (
-    <div className="mx-auto flex max-w-xl flex-col items-center px-4 py-28 text-center sm:px-6">
+    <LivingScene name="quiet" mode="beacon" needs="kit.js" className="lp-quiet-404">
+    <div className="relative mx-auto flex max-w-xl flex-col items-center px-4 py-28 text-center sm:px-6">
       <Octagon className="h-12 w-12 fill-[var(--color-hardstop)]/15 text-[var(--color-hardstop)]" />
       <h1 className="type-display mt-6 text-4xl">Route not found</h1>
       <p className="mt-2 text-[var(--color-muted)]">
@@ -15,5 +17,6 @@ export default function NotFound() {
         <Button>Return to Training Hub</Button>
       </Link>
     </div>
+    </LivingScene>
   );
 }

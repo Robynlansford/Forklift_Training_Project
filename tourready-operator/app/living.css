@@ -1,0 +1,822 @@
+/* Hallmark · redesign (visual layer only) · macrostructure: preserved (existing routes + section order)
+ * theme: brand — studied from app/globals.css @theme (bg #0b1120 · accent #f97316 · Barlow Condensed + Inter)
+ * layer: Living Pages · genre: atmospheric · anchor hue: safety orange
+ * pre-emit critique: P5 H4 E4 S5 R4 V4
+ * slop (Living layer, 2026-09-29): contrast pass (40–41, measured over live scenes) · honest pass (46)
+ *   · chrome pass (47) · tokens pass (48) · responsive pass (49) · mobile pass (34, 51, 55, 56) · a11y pass (33)
+ *   · nav/footer: preserved site chrome, not re-picked (42–43 out of scope) · log: .hallmark/log.json
+ *
+ * LIVING PAGES — the stylesheet half of public/living/engine.js.
+ * Light roles (one meaning each, everywhere):
+ *   --lp-machine  beacon orange   the machine: forks, boom, load path, capacity
+ *   --lp-crew     followspot blue people and the air they share: crew, riggers, wind, zones
+ *   --lp-moment   show-clock amber the moment of decision: the clock, a check confirmed, a step lit
+ * Red stays signage (the STOP octagon, HARD STOP verdicts) exactly as the app already uses it.
+ */
+
+:root {
+  --lp-machine: var(--color-accent);
+  --lp-crew: var(--color-coolbeam);
+  --lp-moment: var(--color-amber);
+  --lp-stage-bg: var(--color-bg-deep);
+  --lp-ink: var(--color-text);
+  --lp-ink-soft: var(--color-muted);
+  --lp-hair: color-mix(in oklab, var(--color-text) 12%, transparent);
+  --lp-glass: color-mix(in oklab, var(--color-bg-deep) 74%, transparent);
+  /* Label/tag backing: near-opaque so small text holds 4.5:1 over any glow line */
+  --lp-chip: color-mix(in oklab, var(--color-bg-deep) 92%, transparent);
+  --lp-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --lp-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --lp-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --lp-dur-fast: 180ms;
+  --lp-dur: 420ms;
+  --lp-dur-slow: 900ms;
+  --lp-header: 4rem;
+  --lp-space-xs: 0.5rem;
+  --lp-space-sm: 0.75rem;
+  --lp-space-md: 1rem;
+  --lp-space-lg: 1.5rem;
+  --lp-space-xl: 2.5rem;
+}
+
+/* ── Shared: poster + canvas layers ─────────────────────────────────────── */
+.lp-poster,
+.lp-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.lp-poster {
+  object-fit: cover;
+}
+.lp-canvas {
+  opacity: 0;
+  transition: opacity var(--lp-dur-slow) var(--lp-ease-out);
+  pointer-events: none;
+}
+.lp-live > .lp-canvas,
+.lp-live .lp-stage > .lp-canvas,
+.lp-live .lp-hero-art > .lp-canvas {
+  opacity: 1;
+}
+/* A scene that fell back (no WebGL2 / context lost) or runs reduced keeps its poster. */
+.lp-nogl .lp-canvas,
+.lp-still .lp-canvas {
+  display: none;
+}
+
+/* Projected DOM labels (decorative: the words live in the beats) */
+.lp-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.lp-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.3rem;
+  background: var(--lp-chip);
+  color: var(--lp-crew);
+  border: 1px solid color-mix(in oklab, var(--lp-crew) 40%, transparent);
+  will-change: transform, opacity;
+}
+.lp-label--amber {
+  color: var(--lp-moment);
+  border-color: color-mix(in oklab, var(--lp-moment) 45%, transparent);
+}
+
+/* Small honesty tag: "schematic · not to scale", "illustration", "teaching model" */
+.lp-tag {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  background: var(--lp-chip);
+  color: var(--lp-ink-soft);
+}
+
+/* ── The pinned scroll film ─────────────────────────────────────────────── */
+.lp-film {
+  --lp-runway: 560vh;
+  /* Slide under the sticky (translucent) header so the stage is exactly one
+     viewport at scroll 0 — otherwise its bottom 4rem starts below the fold. */
+  margin-top: calc(-1 * var(--lp-header));
+  position: relative;
+  background: var(--lp-stage-bg);
+  color: var(--lp-ink);
+  isolation: isolate;
+}
+.lp-stage {
+  position: relative;
+  height: 100svh;
+  min-height: 34rem;
+  overflow: hidden;
+  background: var(--lp-stage-bg);
+}
+.lp-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to right, color-mix(in oklab, var(--color-bg-deep) 88%, transparent) 0%, color-mix(in oklab, var(--color-bg-deep) 55%, transparent) 30%, transparent 58%),
+    linear-gradient(to top, color-mix(in oklab, var(--color-bg-deep) 70%, transparent) 0%, transparent 32%);
+}
+.lp-chrome {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+.lp-clock {
+  position: absolute;
+  left: clamp(1rem, 4vw, 3rem);
+  top: calc(var(--lp-header) + 1.25rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: var(--lp-glass);
+  border: 1px solid color-mix(in oklab, var(--lp-moment) 30%, transparent);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.14em;
+  color: var(--lp-moment);
+  text-shadow: 0 0 10px color-mix(in oklab, var(--lp-moment) 55%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+.lp-clock::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--lp-machine);
+  box-shadow: 0 0 10px var(--lp-machine);
+}
+.lp-skip {
+  pointer-events: auto;
+  position: absolute;
+  right: clamp(1rem, 3vw, 2rem);
+  top: calc(var(--lp-header) + 1.25rem);
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.55rem;
+  border: 1px solid color-mix(in oklab, var(--color-border) 80%, transparent);
+  background: var(--lp-glass);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--lp-ink);
+  white-space: nowrap;
+  transition: border-color var(--lp-dur-fast) var(--lp-ease-out);
+}
+.lp-skip:hover {
+  border-color: color-mix(in oklab, var(--lp-machine) 55%, transparent);
+}
+.lp-schematic {
+  position: absolute;
+  right: clamp(1rem, 3vw, 2rem);
+  /* above the site's fixed tutor launcher (bottom-right), never under it */
+  bottom: 5.5rem;
+}
+.lp-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 1.4rem;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--lp-ink-soft);
+  white-space: nowrap;
+}
+.lp-hint i {
+  width: 1.3rem;
+  height: 2.05rem;
+  border-radius: 0.75rem;
+  border: 2px solid color-mix(in oklab, var(--lp-ink) 28%, transparent);
+  position: relative;
+}
+.lp-hint i::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0.4rem;
+  width: 0.22rem;
+  height: 0.42rem;
+  margin-left: -0.11rem;
+  border-radius: 0.2rem;
+  background: var(--lp-machine);
+  animation: lp-wheel 1.7s var(--lp-ease-in-out) infinite;
+}
+@keyframes lp-wheel {
+  0% { transform: translateY(0); opacity: 1; }
+  70% { transform: translateY(0.55rem); opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+
+/* Title card (beat 0) lives inside the stage in both modes → identical first paint */
+.lp-title {
+  position: absolute;
+  z-index: 2;
+  left: clamp(1rem, 5vw, 4.5rem);
+  right: clamp(1rem, 5vw, 4.5rem);
+  bottom: clamp(5.5rem, 16vh, 9rem);
+  max-width: 40rem;
+}
+.lp-title .lp-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--lp-machine);
+}
+.lp-title .lp-kicker::before {
+  content: "";
+  width: 1.75rem;
+  height: 0.6rem;
+  border-radius: 2px;
+  background-image: repeating-linear-gradient(-45deg, var(--lp-machine) 0 6px, transparent 6px 12px);
+  opacity: 0.85;
+}
+.lp-title p.lp-lede {
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+  font-size: clamp(2rem, 5.4vw, 4.4rem);
+  color: var(--lp-ink);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.lp-title p.lp-sub {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lp-ink-soft);
+}
+
+/* Beats — static (no JS / reduced motion / no WebGL before pinning): a run sheet */
+.lp-beats {
+  position: relative;
+  z-index: 2;
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(1rem, 5vw, 4.5rem);
+  display: grid;
+  gap: clamp(2rem, 4vw, 3rem);
+}
+.lp-beat {
+  max-width: 34rem;
+  border-top: 1px solid var(--lp-hair);
+  padding-top: 1.25rem;
+}
+.lp-beat .lp-eyebrow {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--lp-moment);
+  font-variant-numeric: tabular-nums;
+}
+.lp-beat h2 {
+  margin-top: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.02;
+  font-size: clamp(1.9rem, 3.6vw, 3.1rem);
+  color: var(--lp-ink);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.lp-beat p {
+  margin-top: 0.9rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: color-mix(in oklab, var(--lp-ink) 78%, var(--lp-stage-bg));
+}
+.lp-beat ul {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.lp-beat li {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--lp-machine) 38%, transparent);
+  color: color-mix(in oklab, var(--lp-machine) 82%, var(--lp-ink));
+  background: color-mix(in oklab, var(--lp-machine) 9%, transparent);
+  white-space: nowrap;
+}
+.lp-beat .lp-ctas {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+.lp-beat .lp-ctas a.lp-textlink {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--lp-ink-soft);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--lp-ink-soft) 40%, transparent);
+  text-underline-offset: 0.25em;
+  white-space: nowrap;
+}
+.lp-beat .lp-ctas a.lp-textlink:hover {
+  color: var(--lp-ink);
+}
+
+/* Beats — pinned (engine adds .lp-pinned once it runs, motion allowed) */
+.lp-film.lp-pinned {
+  height: var(--lp-runway, 560vh);
+}
+.lp-pinned .lp-stage {
+  position: sticky;
+  top: 0;
+}
+.lp-pinned .lp-beats {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 34rem;
+  margin-top: -100svh;
+  padding: 0;
+  display: block;
+  pointer-events: none;
+}
+@supports not (height: 100svh) {
+  .lp-stage,
+  .lp-pinned .lp-beats {
+    height: 100vh;
+  }
+  .lp-pinned .lp-beats {
+    margin-top: -100vh;
+  }
+}
+.lp-pinned .lp-beat {
+  position: absolute;
+  left: clamp(1rem, 5vw, 4.5rem);
+  top: 50%;
+  width: min(34rem, calc(100% - 2rem));
+  border-top: 0;
+  padding: 0;
+  opacity: var(--lp-o, 0);
+  transform: translateY(calc(-50% + (1 - var(--lp-o, 0)) * 16px));
+  will-change: opacity, transform;
+}
+.lp-pinned .lp-beat.lp-on {
+  pointer-events: auto;
+}
+.lp-pinned .lp-title,
+.lp-pinned .lp-hint {
+  opacity: var(--lp-o, 1);
+}
+.lp-pinned .lp-beat .lp-eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 1.4rem;
+  height: 1px;
+  margin-right: 0.6rem;
+  vertical-align: middle;
+  background: var(--lp-moment);
+  box-shadow: 0 0 8px var(--lp-moment);
+}
+/* Phones: beats sit on a bottom panel; the scene frames itself above; the pin runs shorter */
+@media (max-width: 767px) {
+  .lp-film {
+    --lp-runway: 470vh;
+  }
+  .lp-scrim {
+    background: linear-gradient(to top, color-mix(in oklab, var(--color-bg-deep) 94%, transparent) 0%, color-mix(in oklab, var(--color-bg-deep) 82%, transparent) 45%, color-mix(in oklab, var(--color-bg-deep) 50%, transparent) 64%, transparent 80%);
+  }
+  /* Beats clear the site's floating tutor button (bottom-right, ~4.5rem). */
+  .lp-pinned .lp-beat {
+    top: auto;
+    bottom: 5.25rem;
+    left: 1rem;
+    width: calc(100% - 2rem);
+    transform: translateY(calc((1 - var(--lp-o, 0)) * 14px));
+  }
+  .lp-beat h2 {
+    font-size: clamp(1.65rem, 7.4vw, 2.2rem);
+  }
+  .lp-beat p {
+    font-size: 0.93rem;
+    line-height: 1.55;
+  }
+  .lp-title {
+    bottom: 6.5rem;
+    right: 5rem;
+  }
+  .lp-clock {
+    top: calc(var(--lp-header) + 0.75rem);
+    font-size: 0.9rem;
+  }
+  .lp-skip {
+    top: calc(var(--lp-header) + 0.75rem);
+  }
+  .lp-schematic {
+    bottom: auto;
+    right: auto;
+    top: calc(var(--lp-header) + 3.3rem);
+    left: 1rem;
+  }
+  /* one compact line in the title's column, clear of the tutor launcher (bottom-right);
+     the mouse-wheel glyph means nothing on touch, so phones drop it */
+  .lp-hint {
+    left: 1rem;
+    transform: none;
+    align-items: flex-start;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
+  .lp-hint i {
+    display: none;
+  }
+}
+@media (max-width: 767px) and (max-height: 700px) {
+  .lp-pinned .lp-beat p {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* ── Live heroes (non-pinned scenes behind page headers) ────────────────── */
+.lp-hero {
+  position: relative;
+  isolation: isolate;
+}
+.lp-hero-art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.lp-hero-art .lp-poster {
+  opacity: 0.9;
+}
+.lp-live .lp-hero-art .lp-poster {
+  opacity: 0;
+  transition: opacity var(--lp-dur-slow) var(--lp-ease-out);
+}
+.lp-hero-art .lp-fade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, var(--color-bg) 0%, color-mix(in oklab, var(--color-bg) 70%, transparent) 38%, transparent 70%),
+    linear-gradient(to top, var(--color-bg) 0%, transparent 38%);
+}
+@media (max-width: 767px) {
+  .lp-hero-art .lp-fade {
+    background: linear-gradient(to top, var(--color-bg) 8%, color-mix(in oklab, var(--color-bg) 72%, transparent) 55%, color-mix(in oklab, var(--color-bg) 35%, transparent) 100%);
+  }
+}
+
+/* No WebGL2 / reduced motion / context lost: a still aurora in the brand's light roles
+   (posters cover the film; photo plates just keep their photo). */
+.lp-nogl .lp-hero-art:not(.lp-hero-art--over),
+.lp-still .lp-hero-art:not(.lp-hero-art--over) {
+  background:
+    radial-gradient(55% 90% at 80% 85%, color-mix(in oklab, var(--lp-machine) 18%, transparent), transparent 70%),
+    radial-gradient(35% 60% at 92% 15%, color-mix(in oklab, var(--lp-crew) 12%, transparent), transparent 70%),
+    radial-gradient(25% 40% at 65% 30%, color-mix(in oklab, var(--lp-moment) 8%, transparent), transparent 70%);
+}
+
+/* Overlay variant: additive light ON TOP of a photo (module plates) */
+.lp-hero-art--over {
+  z-index: 1;
+}
+.lp-icon-source {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  opacity: 0;
+  pointer-events: none;
+}
+.lp-hero-tag {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.7rem;
+  z-index: 1;
+}
+
+/* Framed band: a window onto the floor behind a page header (hub, knowledge base, certificate) */
+.lp-band {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 17rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-radius: var(--radius-card);
+  border: 1px solid color-mix(in oklab, var(--color-border) 55%, transparent);
+  background: var(--color-bg);
+  overflow: hidden;
+}
+.lp-band--quiet {
+  min-height: 13rem;
+}
+@media (max-width: 767px) {
+  .lp-band {
+    min-height: 0;
+    padding-top: 11rem;
+  }
+  .lp-band--quiet {
+    padding-top: 7rem;
+  }
+  .lp-band .lp-hero-tag {
+    top: 0.7rem;
+    bottom: auto;
+    right: 0.8rem;
+  }
+  /* Phones: the art owns only the space above the heading — never behind the words. */
+  .lp-band > .lp-hero-art {
+    bottom: auto;
+    height: 11.5rem;
+  }
+  .lp-band--quiet > .lp-hero-art {
+    height: 7.5rem;
+  }
+}
+/* The Safety Engine's machine band */
+.lp-machine {
+  aspect-ratio: 21 / 7;
+  min-height: 15rem;
+  /* aspect-ratio would transfer min-height into a 320px min-width on small phones */
+  min-width: 0;
+  border-radius: var(--radius-card);
+  border: 1px solid color-mix(in oklab, var(--color-border) 60%, transparent);
+  background:
+    radial-gradient(80% 90% at 60% 100%, color-mix(in oklab, var(--lp-machine) 7%, transparent), transparent 70%),
+    var(--color-bg-deep);
+  overflow: hidden;
+}
+@media (max-width: 767px) {
+  .lp-machine {
+    aspect-ratio: 4 / 3;
+    min-height: 0;
+  }
+}
+/* 404: a centred pool of dark behind the words instead of the side fade */
+.lp-quiet-404 .lp-fade {
+  background: radial-gradient(50% 55% at 50% 48%, color-mix(in oklab, var(--color-bg) 78%, transparent), transparent 100%);
+}
+
+/* Station + cluster labels */
+.lp-label--station {
+  font-size: 0.68rem;
+  padding: 0.05rem 0.3rem;
+  color: var(--color-muted);
+  border-color: transparent;
+  background: var(--lp-chip);
+}
+.lp-label--station[data-status="passed"] {
+  color: var(--color-go);
+}
+.lp-label--station[data-status="retry"] {
+  color: var(--color-hardstop);
+}
+.lp-label--station[data-status="next"] {
+  color: var(--lp-machine);
+  border-color: color-mix(in oklab, var(--lp-machine) 45%, transparent);
+  background: var(--lp-chip);
+}
+.lp-label--cluster {
+  transition: opacity var(--lp-dur) var(--lp-ease-out);
+  font-size: 0.7rem;
+  border-color: transparent;
+  background: var(--lp-chip);
+}
+
+/* ── Figures (fx.js) ────────────────────────────────────────────────────── */
+.lp-fig {
+  position: relative;
+  margin: 1.5rem 0 0;
+  border: 1px solid color-mix(in oklab, var(--color-border) 70%, transparent);
+  border-radius: var(--radius-card);
+  background:
+    radial-gradient(120% 90% at 70% 0%, color-mix(in oklab, var(--lp-machine) 6%, transparent), transparent 60%),
+    var(--color-bg-deep);
+  overflow: hidden;
+}
+.lp-fig canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--lp-ar, 16 / 7);
+}
+.lp-fig figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+  padding: 0.7rem 1rem 0.85rem;
+  border-top: 1px solid color-mix(in oklab, var(--color-border) 50%, transparent);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+.lp-fig figcaption strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.lp-fig .lp-tag {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.75rem;
+}
+@media (max-width: 480px) {
+  .lp-fig canvas {
+    aspect-ratio: var(--lp-ar-sm, 4 / 3);
+  }
+}
+
+/* ── Scroll-lit route (process steps) ───────────────────────────────────── */
+.lp-route {
+  position: relative;
+}
+.lp-route-rail {
+  position: absolute;
+  pointer-events: none;
+  background: color-mix(in oklab, var(--color-border) 75%, transparent);
+  border-radius: 999px;
+}
+.lp-route-rail::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(var(--lp-rail-dir, to bottom), var(--lp-machine), var(--lp-moment));
+  box-shadow: 0 0 12px color-mix(in oklab, var(--lp-machine) 70%, transparent);
+  transform-origin: 0 0;
+  transform: scaleY(var(--lp-fill, 0));
+}
+.lp-route[data-axis="x"] .lp-route-rail::after {
+  --lp-rail-dir: to right;
+  transform: scaleX(var(--lp-fill, 0));
+}
+.lp-route-beacon {
+  position: absolute;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin: -0.35rem 0 0 -0.35rem;
+  border-radius: 999px;
+  background: var(--lp-moment);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--lp-moment) 25%, transparent), 0 0 18px var(--lp-moment);
+  pointer-events: none;
+  opacity: var(--lp-beacon, 0);
+  transition: opacity var(--lp-dur) var(--lp-ease-out);
+}
+[data-route-item] [data-route-chip] {
+  transition: box-shadow var(--lp-dur) var(--lp-ease-out), background-color var(--lp-dur) var(--lp-ease-out), color var(--lp-dur) var(--lp-ease-out);
+}
+/* In a stacked card grid (phones) a vertical rail would cross the card text: chips only. */
+@media (max-width: 767px) {
+  .lp-route--grid .lp-route-rail,
+  .lp-route--grid .lp-route-beacon {
+    display: none;
+  }
+}
+[data-route-item].lp-lit [data-route-chip] {
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--lp-moment) 70%, transparent), 0 0 18px -2px color-mix(in oklab, var(--lp-moment) 80%, transparent);
+  color: var(--lp-moment);
+}
+
+/* ── Card + button light (finishing layer) ──────────────────────────────── */
+.lp-light {
+  position: relative;
+}
+.lp-light::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), color-mix(in oklab, var(--lp-machine) 85%, transparent), transparent 62%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--lp-dur) var(--lp-ease-out);
+  pointer-events: none;
+  z-index: 2;
+}
+.lp-light:hover::after,
+.lp-light:focus-within::after {
+  opacity: 1;
+}
+.lp-sweep {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.lp-sweep::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(105deg, transparent 32%, color-mix(in oklab, var(--color-text) 55%, transparent) 50%, transparent 68%);
+  transform: translateX(-130%);
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+}
+.lp-sweep:hover::after,
+.lp-sweep:focus-visible::after {
+  transform: translateX(130%);
+  transition: transform var(--lp-dur-slow) var(--lp-ease-out);
+}
+/* A hairline with a travelling light — the section divider */
+.lp-divider {
+  position: relative;
+  height: 1px;
+  background: color-mix(in oklab, var(--color-border) 60%, transparent);
+  overflow: hidden;
+}
+.lp-divider::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 22%;
+  height: 3px;
+  background: radial-gradient(closest-side, var(--lp-machine), transparent);
+  animation: lp-travel 7s var(--lp-ease-in-out) infinite;
+}
+@keyframes lp-travel {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(470%); }
+}
+
+/* ── Reduced motion: stills, no travel, no sweep ────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .lp-hint i::after,
+  .lp-divider::after {
+    animation: none;
+  }
+  .lp-divider::after {
+    display: none;
+  }
+  .lp-sweep::after {
+    display: none;
+  }
+  .lp-canvas {
+    transition: none;
+  }
+}
+.lp-reduced .lp-divider::after,
+.lp-reduced .lp-sweep::after {
+  display: none;
+}
+
+@media print {
+  .lp-canvas,
+  .lp-labels,
+  .lp-chrome,
+  .lp-hero-art,
+  .lp-fig canvas {
+    display: none !important;
+  }
+  .lp-film,
+  .lp-stage {
+    height: auto !important;
+    min-height: 0 !important;
+    background: none !important;
+  }
+}

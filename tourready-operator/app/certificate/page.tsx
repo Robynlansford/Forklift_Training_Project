@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Lock, ArrowRight, TrendingUp, CheckCircle2, XCircle } from "lucide-react";
-import { MODULES, TOTAL_SCENARIOS, moduleThreshold } from "@/lib/curriculum";
+import { MODULES, TOTAL_SCENARIOS, moduleThreshold, DEFAULT_PASS_THRESHOLD } from "@/lib/curriculum";
 import { useProgress, moduleStatus, overallProgress } from "@/lib/store";
 import { useHydrated } from "@/lib/use-hydrated";
 import { CertificateCard } from "@/components/certificate-card";
@@ -11,6 +11,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusPill } from "@/components/status-pill";
+import { LivingScene } from "@/components/living/living-scene";
+import { LivingFx } from "@/components/living/living-fx";
 
 export default function CertificatePage() {
   const hydrated = useHydrated();
@@ -54,12 +56,27 @@ export default function CertificatePage() {
     );
   }
 
+  // Score bars: this device's saved scores against the pass mark — nothing invented.
+  const scoreBars = {
+    pass: Math.round(DEFAULT_PASS_THRESHOLD * 100),
+    rows: MODULES.map((m) => {
+      const s = scores[m.slug];
+      return {
+        label: m.title,
+        pct: s ? Math.round((s.pass / s.total) * 100) : null,
+        passed: moduleStatus(m, scores) === "passed",
+      };
+    }),
+  };
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-      <h1 className="type-display text-4xl sm:text-5xl">Certification &amp; Progress</h1>
-      <p className="mt-2 text-[var(--color-muted)]">
-        Pass all {MODULES.length} modules to issue your verifiable Tour-Ready Operator credential.
-      </p>
+      <LivingScene name="quiet" mode="worklight" needs="kit.js" className="lp-band lp-band--quiet">
+        <h1 className="type-display relative text-4xl sm:text-5xl">Certification &amp; Progress</h1>
+        <p className="relative mt-2 text-[var(--color-muted)]">
+          Pass all {MODULES.length} modules to issue your verifiable Tour-Ready Operator credential.
+        </p>
+      </LivingScene>
 
       {overall.certified ? (
         <div className="mt-8 space-y-6">
@@ -121,6 +138,19 @@ export default function CertificatePage() {
       {/* Progress history */}
       <section className="mt-12">
         <h2 className="mb-4 text-xl font-bold tracking-tight">Module Progress</h2>
+        <LivingFx
+          name="bars"
+          data={scoreBars}
+          aspect="16 / 8"
+          aspectSmall="3 / 4"
+          className="mb-4 !mt-0"
+          caption={
+            <span>
+              Your score on each module against the {scoreBars.pass}% pass mark, read from the
+              progress saved on this device.
+            </span>
+          }
+        />
         <div className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)]/70">
           {MODULES.map((m, i) => {
             const s = scores[m.slug];

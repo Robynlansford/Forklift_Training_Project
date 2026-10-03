@@ -3,6 +3,7 @@
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
 import { MODULES, TOTAL_SCENARIOS } from "@/lib/curriculum";
+import { FILM_BEATS } from "@/lib/load-out";
 
 declare global {
   interface Window {
@@ -31,87 +32,17 @@ type SectionDef = {
    the build, so total payload (and therefore load progress) needs no
    preflight HEAD round-trip; the numbers below must match
    public/scroll-intro/{vid,img}/legN.* whenever those files are re-encoded. */
-const SECTIONS: SectionDef[] = [
-  {
-    id: "yard",
-    label: "The Yard",
-    video: "/scroll-intro/vid/leg1.mp4",
-    poster: "/scroll-intro/img/leg1.webp",
-    videoBytes: 2321145,
-    posterBytes: 74874,
-    accent: "#F97316",
-    scroll: 1.5,
-    linger: 0.3,
-    eyebrow: "23:10 · Load-in",
-    title: "The Wet Ramp Slick starts before the wheels ever move.",
-    body: "Aluminum loading ramps turn frictionless in active rain. Every approach is calculated — momentum, wheel-spin, a precise straight-on line — before the machine ever leaves the yard.",
-    tags: ["Wet Ramp Slick", "Incline Dynamics"],
-  },
-  {
-    id: "trailer",
-    label: "Fork Pockets",
-    video: "/scroll-intro/vid/leg2.mp4",
-    poster: "/scroll-intro/img/leg2.webp",
-    videoBytes: 1796783,
-    posterBytes: 65548,
-    accent: "#FBBF24",
-    scroll: 1.5,
-    linger: 0.35,
-    eyebrow: "23:40 · Truck Pack",
-    title: "Miss a slot by an inch, spear a $200k processor.",
-    body: "Vertical Rib Symmetry and the Level-Fork Shadow Trick turn blind, dark-trailer alignment into a repeatable skill — not a guess, not a gouge.",
-    tags: ["Vertical Rib Symmetry", "Level-Fork Shadow", "Flush-Fork Rule"],
-  },
-  {
-    id: "dock",
-    label: "Ground Crew",
-    video: "/scroll-intro/vid/leg3.mp4",
-    poster: "/scroll-intro/img/leg3.webp",
-    videoBytes: 1937169,
-    posterBytes: 55436,
-    accent: "#F97316",
-    scroll: 1.4,
-    linger: 0.3,
-    eyebrow: "00:25 · Ground Crew",
-    title: "The Rear-Swing Halo Zone doesn't care how eager the crew is.",
-    body: "Counterbalance forklifts steer from the rear — the tail swings. A strict 3-foot boundary and the mandatory Clear-and-Release pause keep hands off the steel until it's actually down.",
-    tags: ["Rear-Swing Halo", "Clear-and-Release", "Pusher's Blindness Yield"],
-  },
-  {
-    id: "rigging",
-    label: "Up-Look",
-    video: "/scroll-intro/vid/leg4.mp4",
-    poster: "/scroll-intro/img/leg4.webp",
-    videoBytes: 1804869,
-    posterBytes: 43080,
-    accent: "#22C55E",
-    scroll: 1.6,
-    linger: 0.4,
-    eyebrow: "01:05 · Rigging Zone",
-    title: "A 2 lb shackle falling 60 ft hits like a 120 lb weight.",
-    body: "Active rigging turns the airspace above the floor into its own hazard zone. The Up-Look Protocol and Sail Effect wind-load math make that airspace survivable — one spotter, obeyed, every time.",
-    tags: ["Up-Look Protocol", "Sail Effect Derating"],
-  },
-  {
-    id: "capstone",
-    label: "02:00",
-    video: "/scroll-intro/vid/leg5.mp4",
-    poster: "/scroll-intro/img/leg5.webp",
-    videoBytes: 1361976,
-    posterBytes: 46214,
-    accent: "#EF4444",
-    scroll: 1.8,
-    linger: 0.55,
-    eyebrow: "02:00 · Arena Load-Out",
-    title: "Be the operator who calls STOP when it counts.",
-    body: "Fourteen hours in. Strobes firing. The last case, alone under one work light. This is the reflex the whole curriculum is built to make automatic — and the capstone that certifies you've got it.",
-    tags: ["Stop-Work Authority", "Fatigue Protocol"],
-    cta: {
-      primary: { label: "Enter the Training Hub", href: "/dashboard" },
-      secondary: { label: "Open Safety Engine", href: "/simulator" },
-    },
-  },
-];
+/* Media per beat; the words come from lib/load-out.ts (shared with the
+   code-drawn film on the home page, so the two can never drift apart). */
+const MEDIA: Record<string, Pick<SectionDef, "video" | "poster" | "videoBytes" | "posterBytes" | "accent" | "scroll" | "linger">> = {
+  yard: { video: "/scroll-intro/vid/leg1.mp4", poster: "/scroll-intro/img/leg1.webp", videoBytes: 2321145, posterBytes: 74874, accent: "#F97316", scroll: 1.5, linger: 0.3 },
+  trailer: { video: "/scroll-intro/vid/leg2.mp4", poster: "/scroll-intro/img/leg2.webp", videoBytes: 1796783, posterBytes: 65548, accent: "#FBBF24", scroll: 1.5, linger: 0.35 },
+  dock: { video: "/scroll-intro/vid/leg3.mp4", poster: "/scroll-intro/img/leg3.webp", videoBytes: 1937169, posterBytes: 55436, accent: "#F97316", scroll: 1.4, linger: 0.3 },
+  rigging: { video: "/scroll-intro/vid/leg4.mp4", poster: "/scroll-intro/img/leg4.webp", videoBytes: 1804869, posterBytes: 43080, accent: "#22C55E", scroll: 1.6, linger: 0.4 },
+  capstone: { video: "/scroll-intro/vid/leg5.mp4", poster: "/scroll-intro/img/leg5.webp", videoBytes: 1361976, posterBytes: 46214, accent: "#EF4444", scroll: 1.8, linger: 0.55 },
+};
+
+const SECTIONS: SectionDef[] = FILM_BEATS.map((b) => ({ ...b, ...MEDIA[b.id] }));
 
 const TOTAL_BYTES = SECTIONS.reduce((sum, s) => sum + s.videoBytes + s.posterBytes, 0);
 
