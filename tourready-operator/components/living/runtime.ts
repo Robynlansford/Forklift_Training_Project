@@ -11,7 +11,7 @@ import { useEffect, type RefObject } from "react";
  * Bump LIVING_VERSION whenever a file under public/living/ changes: every
  * engine/scene/poster URL carries it, and _headers caches /living/* immutably.
  */
-export const LIVING_VERSION = "1";
+export const LIVING_VERSION = "2";
 
 type LivingAPI = {
   mount: (el: HTMLElement) => unknown;

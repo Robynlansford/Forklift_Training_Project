@@ -124,8 +124,11 @@ function ok(cond, msg) {
   await page.goto(origin + "/", { waitUntil: "load" });
   await page.waitForFunction("window.__ready === true", { timeout: 25000 });
   const links = await page.evaluate(() => [...document.querySelectorAll("a")].map((a) => a.getAttribute("href")));
-  for (const h of ["#hero", "/dashboard", "/simulator", "/film"]) ok(links.includes(h), `home link ${h} present`);
-  await page.click("a.lp-skip");
+  for (const h of ["/dashboard", "/simulator"]) ok(links.includes(h), `home link ${h} present`);
+  // original footage hero: its "Skip film" is a button
+  const findSkip = () => [...document.querySelectorAll("button, a")].find((b) => b.getClientRects().length && /skip film/i.test(b.textContent));
+  await page.waitForFunction(findSkip, { timeout: 60000 });
+  await page.evaluate((f) => eval(f)().click(), "(" + findSkip.toString() + ")");
   await new Promise((r) => setTimeout(r, 2600)); // html has scroll-behavior: smooth
   const heroTop = await page.evaluate(() => Math.round(document.getElementById("hero").getBoundingClientRect().top));
   ok(Math.abs(heroTop) < 90, `"Skip film" lands on the hero (top=${heroTop}px)`);

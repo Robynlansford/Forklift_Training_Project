@@ -4,7 +4,7 @@ const slugs = ["basic-controls","legal-baselines","touring-credentials","spotter
 (async () => {
   const origin = process.argv[2];
   const b = await launch();
-  const pages = ["/", "/dashboard", "/simulator", "/resources", "/certificate", "/film", ...slugs.map(s => "/modules/" + s)];
+  const pages = ["/", "/dashboard", "/simulator", "/resources", "/certificate", ...slugs.map(s => "/modules/" + s)];
   let bad = 0;
   for (const path of pages) {
     const p = await b.newPage(); await p.setViewport({ width: 1440, height: 900 });

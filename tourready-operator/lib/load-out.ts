@@ -1,10 +1,8 @@
 /**
  * THE LOAD-OUT — the five beats of the home-page scroll film.
  *
- * Single source for the film's words. Both the code-drawn film on `/`
- * (components/living/load-out-film.tsx) and the original footage film on
- * `/film` (components/scroll-intro.tsx) read from here, so the copy can never
- * drift between them. Text is verbatim from the original film.
+ * Single source for the film's words, read by the original footage film on the
+ * home page (components/scroll-intro.tsx). Text is verbatim from the original film.
  */
 export interface FilmBeat {
   id: string;

@@ -2,7 +2,15 @@
 
 Date: 2026-09-29 · Branch: `living-pages` (from `main` @ e354cc5) · **Nothing committed or pushed.**
 
-## ⚠ STATUS 2026-10-03 — PAUSED, owner corrections pending
+## STATUS 2026-10-05 — owner chose option 1: original footage hero kept
+
+- Home page opens on the original footage scroll hero again (`components/scroll-intro.tsx`). The WebGL load-out film (`loadout.js`, its component, posters) and the `/film` page are removed. `LIVING_VERSION` bumped to "2".
+- Why: the footage never shows a forklift doing the wrong thing; the code-drawn film did (forklift driving into the truck).
+- Re-verified locally (prod build, 41958): 20 routes 0 errors, 30/30 interactions incl. original "Skip film" → hero, no overflow.
+- Still flagged (site copy, not rewritten): beat 1 "…a precise straight-on line — before the machine ever leaves the yard" implies a machine on the ramp.
+- Not done: new preview upload (preview 8e8e7da9 still has the old film); contrast/collide/hallmark scripts still target the removed film.
+
+## (history) STATUS 2026-10-03 — PAUSED, owner corrections pending
 
 **The film's story is factually wrong (owner, 2026-09-29):**
 - The forklift **never goes inside the trucks.**

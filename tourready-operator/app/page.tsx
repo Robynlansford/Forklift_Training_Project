@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TiltCard } from "@/components/tilt-card";
-import { LoadOutFilm } from "@/components/living/load-out-film";
+import { ScrollIntro } from "@/components/scroll-intro";
 import { LivingScene } from "@/components/living/living-scene";
 import { LivingRoute } from "@/components/living/living-fx";
 import { MODULES, TOTAL_SCENARIOS } from "@/lib/curriculum";
@@ -255,8 +255,8 @@ export default function Landing() {
     // overflow-x: clip (not hidden) — `hidden` makes this div a scroll container,
     // which would stop the pinned film below from sticking to the viewport.
     <div className="overflow-x-clip bg-[var(--color-page-bg)]">
-      {/* ── The Load-Out — the signature scroll film, drawn in code ──── */}
-      <LoadOutFilm />
+      {/* ── The Load-Out — scroll-scrubbed cinematic intro (original footage) ──── */}
+      <ScrollIntro />
 
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section
