@@ -8,7 +8,8 @@ Date: 2026-09-29 · Branch: `living-pages` (from `main` @ e354cc5) · **Nothing 
 - Why: the footage never shows a forklift doing the wrong thing; the code-drawn film did (forklift driving into the truck).
 - Re-verified locally (prod build, 41958): 20 routes 0 errors, 30/30 interactions incl. original "Skip film" → hero, no overflow.
 - Still flagged (site copy, not rewritten): beat 1 "…a precise straight-on line — before the machine ever leaves the yard" implies a machine on the ramp.
-- Not done: new preview upload (preview 8e8e7da9 still has the old film); contrast/collide/hallmark scripts still target the removed film.
+- New preview: version fb94e10a at https://fb94e10a-tourready-operator.robynlansford.workers.dev (production still e0434863). Preview check: routes clean, Skip film OK; /api/grade 502 again in 1 of 2 runs (pre-existing).
+- Not done: contrast/collide/hallmark scripts still target the removed film.
 
 ## (history) STATUS 2026-10-03 — PAUSED, owner corrections pending
 
