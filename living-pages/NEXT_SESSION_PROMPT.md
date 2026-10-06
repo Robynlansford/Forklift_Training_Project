@@ -10,8 +10,9 @@ Resume the Living Pages work on Tour Ready Operator (`tourready-operator/`, Next
 3. Memory note `tourready-living-pages-build`.
 
 **Where things stand:**
-- Branch `living-pages` is committed locally and not pushed.
-- Preview version `8e8e7da9` is uploaded. Production is untouched (version `e0434863`).
+- LIVE since 2026-10-06: version `fb94e10a` (original footage hero kept, WebGL film removed). Rollback: `e0434863`.
+- `living-pages` is merged into `main` (8f20a75) and pushed.
+- The film-rebuild steps below are SUPERSEDED: the owner chose the footage hero. Only use them if the owner asks for a corrected WebGL film.
 - Never push, deploy or promote without my explicit go.
 
 **Owner corrections. They override the current film:**

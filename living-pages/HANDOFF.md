@@ -1,8 +1,17 @@
 # Living Pages — hand-off (Tour Ready Operator)
 
-Date: 2026-09-29 · Branch: `living-pages` (from `main` @ e354cc5) · **Nothing committed or pushed.**
+Date: 2026-09-29 (updated 2026-10-06) · Branch `living-pages` merged into `main` (fast-forward to 8f20a75) and pushed · **LIVE: version fb94e10a at 100%.**
 
-## STATUS 2026-10-05 — owner chose option 1: original footage hero kept
+## STATUS 2026-10-06 — LIVE
+
+- Promoted fb94e10a to 100% on 2026-10-06 (owner go). Live site: https://tourready-operator.robynlansford.workers.dev — checked: `/`, `/dashboard`, `/simulator` 200, home has the footage film + "Skip film"; `/film` 404 (removed).
+- Rollback: `npx wrangler versions deploy e0434863-6fbe-4b34-a611-106bb30deb39@100% --yes` (run in `tourready-operator`).
+- Git: `living-pages` pushed; `main` fast-forwarded to 8f20a75 and pushed. Pushing `main` did not start an automatic deploy (still fb94e10a 45 s later; later not checked).
+- Wrangler gotcha: the project's wrangler (4.131) reads `~/.wrangler/config`; the login lives in `AppData/Roaming/xdg.config/.wrangler/config`. Either `npx wrangler login` from the project, or copy that file in temporarily.
+- Not verified on the live site: real phone scroll, Safari/Firefox.
+- Still open (owner): beat-1 copy flag; physics wording flag; README 139 vs 143. Optional: update the stale contrast/collide/hallmark scripts.
+
+## (history) STATUS 2026-10-05 — owner chose option 1: original footage hero kept
 
 - Home page opens on the original footage scroll hero again (`components/scroll-intro.tsx`). The WebGL load-out film (`loadout.js`, its component, posters) and the `/film` page are removed. `LIVING_VERSION` bumped to "2".
 - Why: the footage never shows a forklift doing the wrong thing; the code-drawn film did (forklift driving into the truck).
